@@ -1,5 +1,5 @@
 name: Deploy web app to GitHub Pages
-# Retriggering after enabling Pages (Settings -> Pages -> Source: GitHub Actions).
+# Retrigger: GitHub Pages source is now set to GitHub Actions.
 
 on:
   push:
