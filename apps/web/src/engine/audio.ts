@@ -79,6 +79,58 @@ export function speakWithHighlight(text: string, lang: SpeechPart['lang'], onSta
   speechSynthesis.speak(u);
 }
 
+/**
+ * Speaks a word and walks the highlight through its letters as it's pronounced, so a multi-letter
+ * word glows one letter at a time instead of all at once. `segments` are the word's clusters
+ * (a base letter plus any harakat on it) with their `start`/`end` offset in `text`, from
+ * `lib/arabic`'s `clusters()`. Most voices never report per-character timing (`onboundary` is
+ * word/sentence-level at best, especially for Arabic), so progress is paced by a timer sized to
+ * the speech rate; a real `onboundary` character offset, when a voice does provide one, resyncs it.
+ */
+export function speakWithLetterHighlight(
+  text: string,
+  lang: SpeechPart['lang'],
+  segments: Array<{ start: number; end: number }>,
+  onIndex: (index: number) => void,
+  onEnd: () => void,
+) {
+  if (muted || typeof speechSynthesis === 'undefined' || segments.length === 0) {
+    onEnd();
+    return;
+  }
+  speechSynthesis.cancel();
+  const u = utterance(text, lang);
+  let timer: ReturnType<typeof setInterval> | undefined;
+  const stop = () => {
+    if (timer !== undefined) clearInterval(timer);
+    timer = undefined;
+  };
+  u.onstart = () => {
+    let i = 0;
+    onIndex(i);
+    const perLetterMs = Math.max(180, 260 / SPEECH_RATE);
+    timer = setInterval(() => {
+      i += 1;
+      if (i >= segments.length) return stop();
+      onIndex(i);
+    }, perLetterMs);
+  };
+  u.onboundary = (e) => {
+    if (e.charIndex === undefined) return;
+    const i = segments.findIndex((s) => e.charIndex >= s.start && e.charIndex < s.end);
+    if (i !== -1) onIndex(i);
+  };
+  u.onend = () => {
+    stop();
+    onEnd();
+  };
+  u.onerror = () => {
+    stop();
+    onEnd();
+  };
+  speechSynthesis.speak(u);
+}
+
 const TONES: Record<Sfx, Array<[freq: number, start: number, dur: number]>> = {
   correct: [[660, 0, 0.12], [880, 0.12, 0.18]],
   tryAgain: [[330, 0, 0.15], [294, 0.15, 0.2]],

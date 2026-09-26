@@ -10,7 +10,13 @@ import DragDrop from './drag_drop/DragDrop';
 import TraceLetter from './trace/TraceLetter';
 import StoryCard from './story_card/StoryCard';
 
-vi.mock('@/engine/audio', () => ({ sfx: vi.fn(), speak: vi.fn(), speakAll: vi.fn(), speakWithHighlight: vi.fn() }));
+vi.mock('@/engine/audio', () => ({
+  sfx: vi.fn(),
+  speak: vi.fn(),
+  speakAll: vi.fn(),
+  speakWithHighlight: vi.fn(),
+  speakWithLetterHighlight: vi.fn(),
+}));
 
 beforeEach(() => vi.useFakeTimers());
 afterEach(() => vi.useRealTimers());
@@ -24,7 +30,7 @@ describe('LearnCard', () => {
   it('shows the letter, example word and position forms, then continues', () => {
     const onDone = vi.fn();
     render(<LearnCard activity={{ id: 'x', type: 'learn_card', phase: 'learn', itemId: BA }} onDone={onDone} />);
-    expect(screen.getByTestId('example-word')).toHaveTextContent('بَطَّة');
+    expect(screen.getByTestId('example-word').textContent?.replace(/‍/g, '')).toBe('بَطَّة');
     expect(screen.getByText('start')).toBeInTheDocument();
     fireEvent.click(screen.getByRole('button', { name: /Next/ }));
     expect(onDone).toHaveBeenCalledWith({ correct: true });
@@ -44,18 +50,24 @@ describe('LearnCard', () => {
     expect(glyph.className).not.toContain('text-leaf-500');
   });
 
-  it("highlights the example word green (kept whole, never split, so matras/harakat stay correctly placed) while it's spoken", async () => {
-    const { speakWithHighlight } = await import('@/engine/audio');
+  it('highlights the example word one letter at a time as it is spoken (harakat stay attached to their base letter)', async () => {
+    const { speakWithLetterHighlight } = await import('@/engine/audio');
     render(<LearnCard activity={{ id: 'x', type: 'learn_card', phase: 'learn', itemId: BA }} onDone={vi.fn()} />);
     const word = screen.getByTestId('example-word');
-    expect(word.textContent).toBe('بَطَّة'); // one unbroken string — no per-letter spans
+    expect(word.textContent?.replace(/‍/g, '')).toBe('بَطَّة');
+    const letters = word.querySelectorAll('span');
+    expect(letters.length).toBe(3); // ب / طّ / ة — each cluster is one base letter plus its harakat
 
     fireEvent.click(word);
-    const [, , onStart, onEnd] = vi.mocked(speakWithHighlight).mock.calls.at(-1)!;
-    act(() => onStart());
-    expect(word.className).toContain('text-leaf-500');
+    const [, , , onIndex, onEnd] = vi.mocked(speakWithLetterHighlight).mock.calls.at(-1)!;
+    act(() => onIndex(0));
+    expect(letters[0]!.className).toContain('text-leaf-500');
+    expect(letters[1]!.className).not.toContain('text-leaf-500');
+    act(() => onIndex(1));
+    expect(letters[0]!.className).not.toContain('text-leaf-500');
+    expect(letters[1]!.className).toContain('text-leaf-500');
     act(() => onEnd());
-    expect(word.className).not.toContain('text-leaf-500');
+    expect(letters[1]!.className).not.toContain('text-leaf-500');
   });
 });
 

@@ -1,8 +1,8 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { getItem } from '@/content/course';
-import { speakWithHighlight } from '@/engine/audio';
-import { positionForms } from '@/lib/arabic';
+import { speakWithHighlight, speakWithLetterHighlight } from '@/engine/audio';
+import { clusters, positionForms } from '@/lib/arabic';
 import { ArabicText } from '@/ui/ArabicText';
 import { Button } from '@/ui/Button';
 import type { ActivityProps } from '../types';
@@ -14,12 +14,13 @@ export default function LearnCard({ activity, onDone }: ActivityProps<'learn_car
   const forms = positionForms(item.glyph);
   const order = ['isolated', 'initial', 'medial', 'final'] as const;
   // Highlights green for exactly as long as it's being spoken, so the child can see which shape
-  // the sound belongs to — both the isolated letter and the example word. The word is kept as one
-  // unbroken string (never split per letter): splitting it would separate each haraka (fatha,
-  // shadda, ...) from its base letter into sibling elements and risk breaking how the browser
-  // shapes and places those combining marks.
+  // the sound belongs to. The isolated letter is a single glyph, so it glows as one piece; the
+  // example word is split into clusters (a base letter plus any harakat riding on it, from
+  // lib/arabic's clusters()) so it can glow one letter at a time as it's pronounced, without ever
+  // separating a mark from its base letter into a sibling element.
   const [glowLetter, setGlowLetter] = useState(false);
-  const [glowWord, setGlowWord] = useState(false);
+  const wordClusters = useMemo(() => clusters(item.example.word), [item.example.word]);
+  const [wordIndex, setWordIndex] = useState<number | null>(null);
 
   return (
     <div data-testid="learn-card" className="flex flex-col items-center gap-4 pb-4">
@@ -40,16 +41,19 @@ export default function LearnCard({ activity, onDone }: ActivityProps<'learn_car
 
       <button
         type="button"
-        onClick={() => speakWithHighlight(item.example.word, 'ar', () => setGlowWord(true), () => setGlowWord(false))}
+        onClick={() =>
+          speakWithLetterHighlight(item.example.word, 'ar', wordClusters, setWordIndex, () => setWordIndex(null))
+        }
         className="flex w-full items-center justify-between gap-3 rounded-blob bg-sun-100 px-5 py-3 active:scale-95"
       >
         <span className="text-6xl">{item.example.emoji}</span>
         <span className="flex flex-col items-end">
-          <ArabicText
-            data-testid="example-word"
-            className={`text-5xl font-bold transition-colors ${glowWord ? 'text-leaf-500' : 'text-ink'}`}
-          >
-            {item.example.word}
+          <ArabicText data-testid="example-word" className="text-5xl font-bold text-ink">
+            {wordClusters.map((c, i) => (
+              <span key={i} className={`transition-colors ${wordIndex === i ? 'text-leaf-500' : ''}`}>
+                {c.display}
+              </span>
+            ))}
           </ArabicText>
           <span className="text-base font-bold text-ink/60">{t('act.learn.word', { name: item.name.en, meaning: item.example.meaning })}</span>
         </span>
