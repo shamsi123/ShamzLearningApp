@@ -93,7 +93,8 @@ function Shell() {
 
 export function App() {
   return (
-    <BrowserRouter>
+    // BASE_URL mirrors Vite's `base` config: '/' for dev/preview/Docker, '/<repo>/' on GitHub Pages.
+    <BrowserRouter basename={import.meta.env.BASE_URL}>
       <PhoneFrame>
         <Shell />
       </PhoneFrame>

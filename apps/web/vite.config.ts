@@ -4,7 +4,12 @@ import react from '@vitejs/plugin-react';
 import { VitePWA } from 'vite-plugin-pwa';
 import { fileURLToPath, URL } from 'node:url';
 
+// GitHub Pages serves project sites from a subpath (e.g. /shamzlearningapp/); everything else
+// (dev, preview, Docker/nginx) serves from the domain root. VITE_BASE_PATH switches only that.
+const base = process.env.VITE_BASE_PATH ?? '/';
+
 export default defineConfig({
+  base,
   plugins: [
     react(),
     VitePWA({
