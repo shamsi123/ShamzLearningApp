@@ -13,6 +13,7 @@ export default function AuthScreen({ mode }: { mode: 'signup' | 'signin' }) {
   const navigate = useNavigate();
   const register = useStore((s) => s.registerParent);
   const signIn = useStore((s) => s.signIn);
+  const adminSignIn = useStore((s) => s.adminSignIn);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [consent, setConsent] = useState(false);
@@ -67,6 +68,16 @@ export default function AuthScreen({ mode }: { mode: 'signup' | 'signin' }) {
           {mode === 'signup' ? t('auth.haveAccount') : t('auth.noAccount')}
         </Button>
       </form>
+      <button
+        type="button"
+        onClick={() => {
+          adminSignIn();
+          navigate('/profiles');
+        }}
+        className="mt-2 w-full text-center text-sm font-bold text-ink/40 underline underline-offset-2"
+      >
+        🛠️ {t('auth.adminAccess')}
+      </button>
     </Screen>
   );
 }

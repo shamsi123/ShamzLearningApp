@@ -65,6 +65,8 @@ interface State {
    */
   registerParent(email: string, password: string): Promise<void>;
   signIn(email: string, password: string): Promise<boolean>;
+  /** One-tap access for the site owner/tester: no email, no backend call, purely local. */
+  adminSignIn(): void;
   signOut(): void;
   addChild(child: Omit<Child, 'id' | 'createdAt'>): string;
   updateChild(id: string, patch: Partial<Omit<Child, 'id'>>): void;
@@ -143,6 +145,13 @@ export const useStore = create<State>()(
         }
         return ok;
       },
+
+      // Reuses the same local parent record on every tap so repeat visits keep the same children/progress.
+      adminSignIn: () =>
+        set((s) => ({
+          parent: s.parent ?? { email: 'admin@local', passwordHash: '', consentGivenAt: new Date().toISOString(), createdAt: new Date().toISOString() },
+          parentSignedIn: true,
+        })),
 
       signOut: () => set({ parentSignedIn: false, activeChildId: null, backendAuth: null }),
 

@@ -35,7 +35,8 @@
     "haveAccount": "I already have an account",
     "noAccount": "Create a new account",
     "wrongCredentials": "That email and password don't match.",
-    "invalid": "Please enter a valid email and a password of 8+ characters, and tick the consent box."
+    "invalid": "Please enter a valid email and a password of 8+ characters, and tick the consent box.",
+    "adminAccess": "Continue as admin (skip sign-up)"
   },
   "gate": {
     "title": "Grown-ups only",
