@@ -10,7 +10,7 @@ import DragDrop from './drag_drop/DragDrop';
 import TraceLetter from './trace/TraceLetter';
 import StoryCard from './story_card/StoryCard';
 
-vi.mock('@/engine/audio', () => ({ sfx: vi.fn(), speak: vi.fn(), speakAll: vi.fn() }));
+vi.mock('@/engine/audio', () => ({ sfx: vi.fn(), speak: vi.fn(), speakAll: vi.fn(), speakWithHighlight: vi.fn() }));
 
 beforeEach(() => vi.useFakeTimers());
 afterEach(() => vi.useRealTimers());
@@ -24,10 +24,38 @@ describe('LearnCard', () => {
   it('shows the letter, example word and position forms, then continues', () => {
     const onDone = vi.fn();
     render(<LearnCard activity={{ id: 'x', type: 'learn_card', phase: 'learn', itemId: BA }} onDone={onDone} />);
-    expect(screen.getByText('بَطَّة')).toBeInTheDocument();
+    expect(screen.getByTestId('example-word')).toHaveTextContent('بَطَّة');
     expect(screen.getByText('start')).toBeInTheDocument();
     fireEvent.click(screen.getByRole('button', { name: /Next/ }));
     expect(onDone).toHaveBeenCalledWith({ correct: true });
+  });
+
+  it('highlights the isolated letter green for exactly as long as it is spoken', async () => {
+    const { speakWithHighlight } = await import('@/engine/audio');
+    render(<LearnCard activity={{ id: 'x', type: 'learn_card', phase: 'learn', itemId: BA }} onDone={vi.fn()} />);
+    const glyph = screen.getByTestId('big-glyph');
+    expect(glyph.className).not.toContain('text-leaf-500');
+
+    fireEvent.click(screen.getByRole('button', { name: 'Ba' }));
+    const [, , onStart, onEnd] = vi.mocked(speakWithHighlight).mock.calls.at(-1)!;
+    act(() => onStart());
+    expect(glyph.className).toContain('text-leaf-500');
+    act(() => onEnd());
+    expect(glyph.className).not.toContain('text-leaf-500');
+  });
+
+  it("highlights the example word green (kept whole, never split, so matras/harakat stay correctly placed) while it's spoken", async () => {
+    const { speakWithHighlight } = await import('@/engine/audio');
+    render(<LearnCard activity={{ id: 'x', type: 'learn_card', phase: 'learn', itemId: BA }} onDone={vi.fn()} />);
+    const word = screen.getByTestId('example-word');
+    expect(word.textContent).toBe('بَطَّة'); // one unbroken string — no per-letter spans
+
+    fireEvent.click(word);
+    const [, , onStart, onEnd] = vi.mocked(speakWithHighlight).mock.calls.at(-1)!;
+    act(() => onStart());
+    expect(word.className).toContain('text-leaf-500');
+    act(() => onEnd());
+    expect(word.className).not.toContain('text-leaf-500');
   });
 });
 

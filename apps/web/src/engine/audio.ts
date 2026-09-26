@@ -46,15 +46,37 @@ export function speakAll(parts: SpeechPart[]) {
   parts.forEach(({ text, lang }) => speechSynthesis.speak(utterance(text, lang)));
 }
 
+/** Slow and clear for young children learning a new sound — not the platform's conversational default. */
+const SPEECH_RATE = 0.7;
+
 function utterance(text: string, lang: SpeechPart['lang']): SpeechSynthesisUtterance {
   const u = new SpeechSynthesisUtterance(text);
   const tag = LANG_TAGS[lang] ?? 'en-US';
   u.lang = tag;
-  u.rate = 0.85;
+  u.rate = SPEECH_RATE;
   u.pitch = 1.1;
   const voice = speechSynthesis.getVoices().find((v) => v.lang.toLowerCase().startsWith(tag.slice(0, 2)));
   if (voice) u.voice = voice;
   return u;
+}
+
+/**
+ * Speaks one piece of text and highlights whatever it's about (a letter, a word) for exactly as
+ * long as it's being said — `onStart`/`onEnd` toggle the caller's own highlight state. Used where
+ * a tap should visibly tie the sound to the glyph, e.g. the Learn card's letter and example word.
+ */
+export function speakWithHighlight(text: string, lang: SpeechPart['lang'], onStart: () => void, onEnd: () => void) {
+  if (muted || typeof speechSynthesis === 'undefined') {
+    onStart();
+    onEnd();
+    return;
+  }
+  speechSynthesis.cancel();
+  const u = utterance(text, lang);
+  u.onstart = onStart;
+  u.onend = onEnd;
+  u.onerror = onEnd;
+  speechSynthesis.speak(u);
 }
 
 const TONES: Record<Sfx, Array<[freq: number, start: number, dur: number]>> = {
