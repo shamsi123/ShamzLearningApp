@@ -1,5 +1,4 @@
 name: Deploy web app to GitHub Pages
-# Retrigger: workflow permissions updated.
 
 on:
   push:
@@ -39,7 +38,9 @@ jobs:
   deploy:
     needs: build
     runs-on: ubuntu-latest
-    environment: { name: github-pages, url: ${{ steps.deployment.outputs.page_url }} }
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - id: deployment
         uses: actions/deploy-pages@v4
