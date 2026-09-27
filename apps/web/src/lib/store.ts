@@ -37,7 +37,9 @@ export interface ChildSettings {
 export const defaultSettings = (): ChildSettings => ({
   sound: true,
   music: true,
-  dailyLimitMinutes: 20,
+  // No screen-time limit by default — a parent turns one on for their own child from the parent
+  // dashboard's settings (0 means unlimited; see useBreakReason).
+  dailyLimitMinutes: 0,
   quietHours: null,
   uiLang: 'en',
   highContrast: false,

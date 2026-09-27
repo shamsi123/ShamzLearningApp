@@ -165,7 +165,7 @@ export default function ParentDashboard() {
                   value={settings.dailyLimitMinutes}
                   onChange={(e) => updateSettings(child.id, { dailyLimitMinutes: Number(e.target.value) })}
                 >
-                  {[10, 15, 20, 30, 45, 60, 0].map((m) => (
+                  {[0, 10, 15, 20, 30, 45, 60].map((m) => (
                     <option key={m} value={m}>
                       {m === 0 ? '∞' : m}
                     </option>
