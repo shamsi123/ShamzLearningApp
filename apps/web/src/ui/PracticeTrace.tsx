@@ -14,7 +14,18 @@ const GLYPH_SCALE = 0.62;
  * to clear and try again as many times as the child likes. Used on the alphabet overview so every
  * letter has a place to practise writing it, separate from the graded Trace activity in a lesson.
  */
-export function PracticeTrace({ glyph, courseId, size = 140 }: { glyph: string; courseId: string; size?: number }) {
+export function PracticeTrace({
+  glyph,
+  courseId,
+  size = 140,
+  compact = false,
+}: {
+  glyph: string;
+  courseId: string;
+  size?: number;
+  /** Icon-only clear button (no label) — for a tight row of many trace boxes side by side. */
+  compact?: boolean;
+}) {
   const { t } = useTranslation();
   const font = FONTS[courseId] ?? FONTS.ar!;
   const dir = courses[courseId]?.direction ?? 'ltr';
@@ -106,14 +117,26 @@ export function PracticeTrace({ glyph, courseId, size = 140 }: { glyph: string; 
           onPointerCancel={() => (drawing.current = false)}
         />
       </div>
-      <button
-        type="button"
-        onClick={clear}
-        disabled={!hasInk}
-        className="text-sm font-bold text-grape-600 underline underline-offset-2 disabled:opacity-30"
-      >
-        🔄 {t('alphabet.repaint')}
-      </button>
+      {compact ? (
+        <button
+          type="button"
+          aria-label={t('alphabet.repaint')}
+          onClick={clear}
+          disabled={!hasInk}
+          className="flex h-9 w-9 items-center justify-center rounded-full bg-white text-lg shadow-sm disabled:opacity-30"
+        >
+          🔄
+        </button>
+      ) : (
+        <button
+          type="button"
+          onClick={clear}
+          disabled={!hasInk}
+          className="text-sm font-bold text-grape-600 underline underline-offset-2 disabled:opacity-30"
+        >
+          🔄 {t('alphabet.repaint')}
+        </button>
+      )}
     </div>
   );
 }
