@@ -13,6 +13,10 @@ async function onboard(page: Page) {
   await page.getByRole('button', { name: 'Create profile' }).click();
   await page.getByTestId('child-Sara').click();
   await page.getByTestId('course-ar').click();
+  // First-ever visit to a course now goes through the Welcome gate and Meet the Alphabet
+  // before the journey map.
+  await page.getByRole('button', { name: /Meet the alphabet/i }).click();
+  await page.getByRole('button', { name: /Start the lessons/i }).click();
 }
 
 test('parent signs up, child completes an RTL Arabic lesson and unlocks the next one', async ({ page }) => {
