@@ -68,6 +68,13 @@ export const emptyChildData = (): ChildData => ({
   courseIntro: [],
 });
 
+/**
+ * Backfills fields added to `ChildData` after some profiles were already persisted (there's no
+ * store migration) — without this, an old record missing e.g. `courseIntro` throws wherever that
+ * field is read (`.includes` on `undefined`).
+ */
+export const withDefaults = (d: ChildData): ChildData => ({ ...emptyChildData(), ...d });
+
 /** Journey states (FR-10, FR-12, FR-14): a node opens only after the previous one is mastered. */
 export function nodeStatuses(courseId: string, data: ChildData): Record<string, NodeStatus> {
   const out: Record<string, NodeStatus> = {};

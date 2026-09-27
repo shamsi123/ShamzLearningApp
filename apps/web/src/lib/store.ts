@@ -6,7 +6,7 @@ import { evaluateMastery, type ItemResult, type MasteryResult } from '@/engine/m
 import { enqueue, flush, newId } from '@/offline/syncQueue';
 import type { UiLang } from '@/i18n';
 import * as api from './api';
-import { emptyChildData, localDate, touchStreak, type ChildData, type LessonSession } from './progress';
+import { emptyChildData, localDate, touchStreak, withDefaults, type ChildData, type LessonSession } from './progress';
 
 export interface Parent {
   email: string;
@@ -129,7 +129,7 @@ export async function hashSecret(secret: string): Promise<string> {
 const patchChild = (state: State, fn: (d: ChildData) => ChildData): Partial<State> => {
   const id = state.activeChildId;
   if (!id) return {};
-  return { data: { ...state.data, [id]: fn(state.data[id] ?? emptyChildData()) } };
+  return { data: { ...state.data, [id]: fn(withDefaults(state.data[id] ?? emptyChildData())) } };
 };
 
 export const useStore = create<State>()(
@@ -455,7 +455,8 @@ api.setOnRefresh((tokens) => useStore.setState({ backendAuth: tokens }));
 
 export function useActiveChild() {
   const child = useStore((s) => s.children.find((c) => c.id === s.activeChildId) ?? null);
-  const data = useStore((s) => (s.activeChildId ? s.data[s.activeChildId] : undefined)) ?? EMPTY;
+  const rawData = useStore((s) => (s.activeChildId ? s.data[s.activeChildId] : undefined));
+  const data = rawData ? withDefaults(rawData) : EMPTY;
   const settings = useStore((s) => (s.activeChildId ? s.settings[s.activeChildId] : undefined)) ?? DEFAULTS;
   return { child, data, settings };
 }
