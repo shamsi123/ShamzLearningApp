@@ -1,5 +1,5 @@
-import { findNode, journeyNodes } from '@/content/course';
-import { buildHelpLoop, buildLesson, generateQuiz } from './buildLesson';
+import { findNode, journeyNodes, taughtItemsUpTo } from '@/content/course';
+import { buildHelpLoop, buildLesson, buildReview, generateQuiz } from './buildLesson';
 
 const lesson = findNode('ar-l1-u1-l2')!;
 
@@ -65,5 +65,34 @@ describe('quiz generator', () => {
     const help = buildHelpLoop(lesson, ['ar-letter-ba'], 1);
     expect(help[0]!.type).toBe('learn_card');
     expect(help.length).toBeGreaterThanOrEqual(3);
+  });
+
+  it('never offers a letter/word the child has not been taught yet as a distractor', () => {
+    // A later unit (u5) has plenty of already-taught letters, so this must never fall back to
+    // borrowing from further ahead in the course.
+    const later = findNode('ar-l1-u5-l2')!;
+    const taught = new Set(taughtItemsUpTo(later));
+    for (let seed = 1; seed <= 5; seed++) {
+      for (const a of [...buildLesson(later, seed).learn, ...buildLesson(later, seed).play, ...generateQuiz(later, seed)]) {
+        if ('options' in a) a.options.forEach((id) => expect(taught.has(id)).toBe(true));
+        if (a.type === 'match_pairs') a.pairs.forEach((id) => expect(taught.has(id)).toBe(true));
+      }
+    }
+  });
+
+  it('falls back to the full course pool only when too few letters are taught yet to fill the options', () => {
+    // The very first lesson teaches a single letter with no reviews — there's nothing else taught
+    // to draw distractors from, so this must still produce valid, schema-passing activities.
+    const first = findNode('ar-l1-u1-l1')!;
+    expect(() => buildLesson(first)).not.toThrow();
+    const tap = buildLesson(first).play.find((a) => a.type === 'listen_tap')!;
+    expect(tap.type === 'listen_tap' && tap.options.length).toBeGreaterThanOrEqual(2);
+  });
+
+  it('practice garden review never surprises the child with an untaught item', () => {
+    // Enough known items that the option count never needs the full-course fallback.
+    const known = ['ar-letter-alif', 'ar-letter-ba', 'ar-letter-ta', 'ar-letter-tha', 'ar-letter-jim'];
+    const review = buildReview(known, known, 'ar', 1);
+    for (const a of review) if (a.type === 'listen_tap') a.options.forEach((id) => expect(known).toContain(id));
   });
 });

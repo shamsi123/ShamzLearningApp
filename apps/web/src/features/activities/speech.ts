@@ -18,7 +18,9 @@ export function activitySpeech(activity: Activity, t: TFunction, lang: UiLang): 
     case 'trace':
       return [say('act.trace.prompt'), name];
     case 'match_pairs':
-      return [say('act.match.prompt')];
+      // A child can't yet read the pictures' words, so preview every one once before they guess —
+      // matching only works if they've actually heard each word, not just seen its picture.
+      return [say('act.match.prompt'), ...activity.pairs.map((id) => ({ text: getItem(id).example.word, lang: courseIdOf(id) as 'ar' | 'hi' }))];
     case 'drag_drop':
       return [say('act.drag.prompt', { meaning: item.example.meaning }), { text: item.example.word, lang: itemLang }];
     case 'pop_balloon':

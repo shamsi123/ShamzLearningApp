@@ -71,6 +71,20 @@ export function nodeItems(node: JourneyNode): { newItems: string[]; reviewItems:
   return { newItems: level.units.flatMap((u) => u.lessons.flatMap((l) => l.newItems)), reviewItems: [] };
 }
 
+/**
+ * Every item taught up to and including this node (a lesson's own new items count as taught once
+ * it reaches Play, since Learn already showed them first). Used so distractor/option pools never
+ * include a letter the child hasn't been introduced to yet.
+ */
+export function taughtItemsUpTo(node: JourneyNode): string[] {
+  const items: string[] = [];
+  for (const n of journeyNodes(node.courseId)) {
+    if (n.kind !== 'lesson' || n.order > node.order) continue;
+    items.push(...n.lesson.newItems);
+  }
+  return items;
+}
+
 export function masteryFor(node: JourneyNode): MasteryConfig {
   const course = courses[node.courseId];
   const base = course?.defaultMastery ?? DEFAULT_MASTERY;
