@@ -1,8 +1,10 @@
-import { useNavigate, useParams } from 'react-router-dom';
+import { useState } from 'react';
+import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { courseItems, courses } from '@/content/course';
 import type { LearningItem } from '@/content/schema';
 import { speak } from '@/engine/audio';
+import { Button } from '@/ui/Button';
 import { Mascot } from '@/ui/Mascot';
 import { PracticeTrace } from '@/ui/PracticeTrace';
 import { ScriptText } from '@/ui/ScriptText';
@@ -28,6 +30,9 @@ export default function AlphabetScreen() {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const { courseId = 'ar' } = useParams();
+  const [params] = useSearchParams();
+  const next = params.get('next');
+  const [downloading, setDownloading] = useState(false);
   const course = courses[courseId];
   const items = courseItems(courseId);
 
@@ -36,10 +41,37 @@ export default function AlphabetScreen() {
 
   const say = (item: LearningItem) => speak(item.name[courseId] ?? item.glyph, courseId as 'ar' | 'hi');
 
+  const goToLessons = () => navigate(next ? `/lesson/${next}` : `/journey/${courseId}`);
+
+  const download = async () => {
+    setDownloading(true);
+    try {
+      const { buildAlphabetWorksheet } = await import('@/lib/alphabetWorksheet');
+      const blob = await buildAlphabetWorksheet(
+        items.map((i) => i.glyph),
+        { title: `${course.title.en} — Alphabet Practice`, instructions: t('alphabet.worksheetInstructions'), rtl: course.direction === 'rtl' },
+      );
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `${courseId}-alphabet-practice.docx`;
+      a.click();
+      URL.revokeObjectURL(url);
+    } finally {
+      setDownloading(false);
+    }
+  };
+
   return (
-    <Screen title={t('alphabet.title')} back="/courses" bg="bg-cream">
+    <Screen title={t('alphabet.title')} back={next ? `/journey/${courseId}` : '/courses'} bg="bg-cream">
       <div className="flex justify-center py-3">
         <Mascot emoji={course.mascot.emoji} says={t('alphabet.intro', { count: items.length })} speakLang="en" size="sm" />
+      </div>
+      <div className="pb-2 text-center">
+        <p className="mb-2 text-sm font-bold text-ink/50">{t('alphabet.optionalHint')}</p>
+        <Button variant="secondary" disabled={downloading} onClick={() => void download()}>
+          {downloading ? `⏳ ${t('alphabet.preparing')}` : `⬇️ ${t('alphabet.download')}`}
+        </Button>
       </div>
       <div className="flex flex-col gap-5 pb-8">
         {rows.map((row, i) => (
@@ -67,9 +99,9 @@ export default function AlphabetScreen() {
         ))}
       </div>
       <div dir={course.direction} className="pb-6 text-center">
-        <button type="button" onClick={() => navigate(`/journey/${courseId}`)} className="font-bold text-grape-600 underline underline-offset-2">
-          {t('alphabet.startLessons')}
-        </button>
+        <Button block onClick={goToLessons}>
+          {t(next ? 'alphabet.beginFirstLesson' : 'alphabet.startLessons')}
+        </Button>
       </div>
     </Screen>
   );

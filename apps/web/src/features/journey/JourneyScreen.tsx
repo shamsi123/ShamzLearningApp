@@ -107,7 +107,13 @@ export default function JourneyScreen() {
                     data-status={status}
                     disabled={status === 'locked'}
                     aria-label={`${node.kind === 'lesson' ? node.lesson.title[lang] : node.kind === 'checkpoint' ? t('journey.checkpoint') : t('journey.levelTest')} — ${status}`}
-                    onClick={() => navigate(`/lesson/${node.id}`)}
+                    onClick={() => {
+                      // The very first lesson of the course opens with the full alphabet intro
+                      // (hear + optionally trace every letter) before the lesson itself — but only
+                      // the first time; once it's been started, tapping it again goes straight in.
+                      const isFirstEver = i === 0 && node.kind === 'lesson' && !data.lessons[node.id];
+                      navigate(isFirstEver ? `/alphabet/${courseId}?next=${node.id}` : `/lesson/${node.id}`);
+                    }}
                     className={`flex items-center justify-center rounded-full ${node.kind === 'lesson' ? 'h-20 w-20' : 'h-24 w-24'} ${STYLES[status]}`}
                   >
                     {status === 'locked' ? <span className="text-3xl">🔒</span> : <NodeFace node={node} />}

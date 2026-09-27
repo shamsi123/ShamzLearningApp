@@ -86,7 +86,12 @@
     "practice": "Trace the letter",
     "repaint": "Clear & try again",
     "linkFromCourses": "Meet the alphabet",
-    "startLessons": "Ready? Start the lessons →"
+    "startLessons": "Ready? Start the lessons →",
+    "beginFirstLesson": "Ready? Begin your first lesson →",
+    "optionalHint": "Tracing here is just for fun — no need to finish it all now. You'll practise writing every letter properly as you go through the lessons.",
+    "download": "Download practice sheet (Word)",
+    "preparing": "Preparing…",
+    "worksheetInstructions": "Trace each letter in the boxes, then practise copying it on your own."
   },
   "gate": {
     "title": "Grown-ups only",
