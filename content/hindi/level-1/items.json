@@ -1,7 +1,7 @@
 {
   "courseId": "hi",
   "items": [
-    { "id": "hi-letter-a", "kind": "letter", "glyph": "अ", "name": { "hi": "अ", "en": "A" }, "translit": "a", "joinsNext": false, "audio": "hi/letters/a.mp3", "example": { "word": "अनार", "plain": "अनार", "meaning": "pomegranate", "emoji": "img:pictures/pomegranate.svg" } },
+    { "id": "hi-letter-a", "kind": "letter", "glyph": "अ", "name": { "hi": "अ", "en": "A" }, "translit": "a", "joinsNext": false, "audio": "hi/letters/a.mp3", "example": { "word": "अनार", "plain": "अनार", "meaning": "pomegranate", "emoji": "img:pictures/pomegranate.png" } },
     { "id": "hi-letter-aa", "kind": "letter", "glyph": "आ", "name": { "hi": "आ", "en": "Aa" }, "translit": "aa", "joinsNext": false, "audio": "hi/letters/aa.mp3", "example": { "word": "आम", "plain": "आम", "meaning": "mango", "emoji": "🥭" } },
     { "id": "hi-letter-i", "kind": "letter", "glyph": "इ", "name": { "hi": "इ", "en": "I" }, "translit": "i", "joinsNext": false, "audio": "hi/letters/i.mp3", "example": { "word": "इंजन", "plain": "इंजन", "meaning": "train engine", "emoji": "🚂" } },
     { "id": "hi-letter-ii", "kind": "letter", "glyph": "ई", "name": { "hi": "ई", "en": "Ii" }, "translit": "ii", "joinsNext": false, "audio": "hi/letters/ii.mp3", "example": { "word": "ईंट", "plain": "ईंट", "meaning": "brick", "emoji": "🧱" } },
