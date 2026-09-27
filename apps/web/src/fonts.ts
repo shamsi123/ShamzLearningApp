@@ -12,3 +12,5 @@ import '@fontsource/baloo-bhaijaan-2/arabic-700.css';
 import '@fontsource/baloo-bhaijaan-2/arabic-800.css';
 import '@fontsource/noto-naskh-arabic/arabic-400.css';
 import '@fontsource/noto-naskh-arabic/arabic-700.css';
+import '@fontsource/noto-sans-devanagari/devanagari-400.css';
+import '@fontsource/noto-sans-devanagari/devanagari-700.css';

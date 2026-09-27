@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { getItem } from '@/content/course';
+import { courseIdOf, courses, getItem } from '@/content/course';
 import { sfx, speak } from '@/engine/audio';
 import { scoreTrace, type Mask, type Point } from '@/engine/tracing';
 import { Button } from '@/ui/Button';
@@ -9,21 +9,24 @@ import type { ActivityProps } from '../types';
 
 const SIZE = 300; // CSS px of the drawing square
 const GRID = 60; // scoring grid resolution
-const FONT = (px: number) => `700 ${px}px "Baloo Bhaijaan 2", "Noto Naskh Arabic", serif`;
+const FONTS: Record<string, (px: number) => string> = {
+  ar: (px) => `700 ${px}px "Baloo Bhaijaan 2", "Noto Naskh Arabic", serif`,
+  hi: (px) => `700 ${px}px "Baloo 2", "Noto Sans Devanagari", sans-serif`,
+};
 const GLYPH_SCALE = 0.62;
 
 /** Renders the glyph into a GRID×GRID boolean mask using the same font as the guide. */
-export function glyphMask(glyph: string): Mask {
+export function glyphMask(glyph: string, courseId: string): Mask {
   const c = document.createElement('canvas');
   c.width = GRID;
   c.height = GRID;
   const g = c.getContext('2d');
   const data = new Array<boolean>(GRID * GRID).fill(false);
   if (!g) return { width: GRID, height: GRID, data };
-  g.font = FONT(GRID * GLYPH_SCALE);
+  g.font = (FONTS[courseId] ?? FONTS.ar!)(GRID * GLYPH_SCALE);
   g.textAlign = 'center';
   g.textBaseline = 'middle';
-  g.direction = 'rtl';
+  g.direction = courses[courseId]?.direction ?? 'ltr';
   g.fillText(glyph, GRID / 2, GRID / 2);
   const px = g.getImageData(0, 0, GRID, GRID).data;
   for (let i = 0; i < GRID * GRID; i++) data[i] = (px[i * 4 + 3] ?? 0) > 110;
@@ -34,6 +37,8 @@ export function glyphMask(glyph: string): Mask {
 export default function TraceLetter({ activity, onDone }: ActivityProps<'trace'>) {
   const { t } = useTranslation();
   const item = getItem(activity.itemId);
+  const courseId = courseIdOf(item.id);
+  const font = FONTS[courseId] ?? FONTS.ar!;
   const guideRef = useRef<HTMLCanvasElement>(null);
   const inkRef = useRef<HTMLCanvasElement>(null);
   const strokes = useRef<Point[][]>([]);
@@ -52,21 +57,21 @@ export default function TraceLetter({ activity, onDone }: ActivityProps<'trace'>
     c.height = SIZE * dpr;
     g.scale(dpr, dpr);
     g.clearRect(0, 0, SIZE, SIZE);
-    g.font = FONT(SIZE * GLYPH_SCALE);
+    g.font = font(SIZE * GLYPH_SCALE);
     g.textAlign = 'center';
     g.textBaseline = 'middle';
-    g.direction = 'rtl';
+    g.direction = courses[courseId]?.direction ?? 'ltr';
     g.fillStyle = '#ede9fe';
     g.fillText(item.glyph, SIZE / 2, SIZE / 2);
     g.setLineDash([6, 8]);
     g.lineWidth = 3;
     g.strokeStyle = '#a78bfa';
     g.strokeText(item.glyph, SIZE / 2, SIZE / 2);
-  }, [item.glyph]);
+  }, [item.glyph, font, courseId]);
 
   useEffect(() => {
     drawGuide();
-    void document.fonts?.load(FONT(40), item.glyph).then(drawGuide);
+    void document.fonts?.load(font(40), item.glyph).then(drawGuide);
     const c = inkRef.current;
     if (c) {
       const dpr = window.devicePixelRatio || 1;
@@ -74,7 +79,7 @@ export default function TraceLetter({ activity, onDone }: ActivityProps<'trace'>
       c.height = SIZE * dpr;
       c.getContext('2d')?.scale(dpr, dpr);
     }
-  }, [drawGuide, item.glyph]);
+  }, [drawGuide, item.glyph, font]);
 
   const pos = (e: React.PointerEvent<HTMLCanvasElement>): Point => {
     const r = e.currentTarget.getBoundingClientRect();
@@ -104,7 +109,7 @@ export default function TraceLetter({ activity, onDone }: ActivityProps<'trace'>
   const check = () => {
     const scale = GRID / SIZE;
     const gridStrokes = strokes.current.map((s) => s.map((p) => ({ x: p.x * scale, y: p.y * scale })));
-    const { accuracy } = scoreTrace(glyphMask(item.glyph), gridStrokes, 2);
+    const { accuracy } = scoreTrace(glyphMask(item.glyph, courseId), gridStrokes, 2);
     const pass = accuracy >= activity.minAccuracy;
     const n = tries + 1;
     setTries(n);

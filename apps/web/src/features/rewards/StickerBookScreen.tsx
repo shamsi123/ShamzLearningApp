@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { arabicCourse } from '@/content/course';
+import { courses } from '@/content/course';
 import { AVATAR_ANIMALS, AVATAR_COLORS, AVATAR_ITEMS, totalStars } from '@/lib/progress';
 import { useActiveChild, useStore } from '@/lib/store';
 import { Avatar } from '@/ui/Avatar';
@@ -14,8 +14,9 @@ export default function StickerBookScreen() {
   const [tab, setTab] = useState<'stickers' | 'avatar'>('stickers');
   if (!child) return null;
   const stars = totalStars(data);
-  const lang = i18n.language === 'ar' ? 'ar' : 'en';
-  const units = arabicCourse.levels.flatMap((l) => l.units);
+  const course = courses[child.courses[0] ?? 'ar']!;
+  const lang = i18n.language === course.languageCode ? course.languageCode : 'en';
+  const units = course.levels.flatMap((l) => l.units);
   const setAvatar = (patch: Partial<typeof child.avatar>) => updateChild(child.id, { avatar: { ...child.avatar, ...patch } });
 
   return (
@@ -57,7 +58,7 @@ export default function StickerBookScreen() {
             <div>
               <h2 className="mb-2 text-xl font-extrabold">{t('stickers.trophies')}</h2>
               <div className="flex gap-3">
-                {arabicCourse.levels.map((l) => (
+                {course.levels.map((l) => (
                   <div key={l.id} className="flex flex-col items-center rounded-2xl bg-white px-4 py-3">
                     <span className={`text-5xl ${data.trophies.includes(l.id) ? '' : 'opacity-20 grayscale'}`}>{l.trophy}</span>
                     <span className="text-sm font-bold">{l.title[lang]}</span>

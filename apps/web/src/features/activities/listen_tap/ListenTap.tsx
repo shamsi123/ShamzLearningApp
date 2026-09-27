@@ -1,5 +1,5 @@
-import { getItem } from '@/content/course';
-import { ArabicText } from '@/ui/ArabicText';
+import { courseIdOf, directionOf, getItem } from '@/content/course';
+import { ScriptText } from '@/ui/ScriptText';
 import { Feedback } from '../Feedback';
 import type { ActivityProps } from '../types';
 import { useAnswer } from '../useAnswer';
@@ -10,10 +10,11 @@ export default function ListenTap({ activity, onDone }: ActivityProps<'listen_ta
   const { feedback, answer, showHint, finished, isCheck } = useAnswer(activity, onDone);
   const [picked, setPicked] = useState<string | null>(null);
   const [shake, setShake] = useState<string | null>(null);
+  const courseId = courseIdOf(activity.itemId);
 
   return (
     <div className="flex flex-col gap-6 pt-4">
-      <div dir="rtl" className={`grid gap-4 ${activity.options.length === 4 ? 'grid-cols-2' : 'grid-cols-3'}`}>
+      <div dir={directionOf(activity.itemId)} className={`grid gap-4 ${activity.options.length === 4 ? 'grid-cols-2' : 'grid-cols-3'}`}>
         {activity.options.map((id) => {
           const item = getItem(id);
           const isTarget = id === activity.itemId;
@@ -40,7 +41,7 @@ export default function ListenTap({ activity, onDone }: ActivityProps<'listen_ta
               }}
               className={`flex aspect-square items-center justify-center rounded-blob transition-all active:translate-y-1 ${state} ${shake === id ? 'animate-shake' : ''}`}
             >
-              <ArabicText className="text-7xl leading-none">{item.glyph}</ArabicText>
+              <ScriptText courseId={courseId} className="text-7xl leading-none">{item.glyph}</ScriptText>
             </button>
           );
         })}

@@ -1,13 +1,13 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { getItem, journeyNodes, nodeTitle } from '@/content/course';
+import { courseIdOf, courses, getItem, journeyNodes, nodeTitle } from '@/content/course';
 import { isWeak } from '@/engine/leitner';
 import { resetGate } from '@/features/auth/ParentGate';
 import { currentNode, emptyChildData, localDate, nodeStatuses, totalStars } from '@/lib/progress';
 import { defaultSettings, useStore } from '@/lib/store';
-import { ArabicText } from '@/ui/ArabicText';
 import { Avatar } from '@/ui/Avatar';
+import { ScriptText } from '@/ui/ScriptText';
 import { Button } from '@/ui/Button';
 import { Screen } from '@/ui/Screen';
 import { Toggle } from '@/ui/Toggle';
@@ -38,16 +38,18 @@ export default function ParentDashboard() {
   const child = children.find((c) => c.id === selected);
   const data = (selected && allData[selected]) || emptyChildData();
   const settings = (selected && allSettings[selected]) || defaultSettings();
-  const lang = i18n.language === 'ar' ? 'ar' : 'en';
-  const nodes = journeyNodes('ar');
+  const courseId = child?.courses[0] ?? 'ar';
+  const course = courses[courseId]!;
+  const lang = i18n.language === course.languageCode ? course.languageCode : 'en';
+  const nodes = journeyNodes(courseId);
   const lessons = nodes.filter((n) => n.kind === 'lesson');
   const mastered = lessons.filter((n) => data.lessons[n.id]?.status === 'mastered').length;
-  const current = currentNode('ar', data);
+  const current = currentNode(courseId, data);
   const days = lastSevenDays();
   const minutes = days.map((d) => data.minutesByDay[d] ?? 0);
   const maxMin = Math.max(10, ...minutes);
   const weak = Object.entries(data.items).filter(([, m]) => isWeak(m)).map(([id]) => id);
-  const states = nodeStatuses('ar', data);
+  const states = nodeStatuses(courseId, data);
   const lockedNodes = nodes.filter((n) => states[n.id] === 'locked');
 
   return (
@@ -128,12 +130,12 @@ export default function ParentDashboard() {
                 <p className="font-bold text-ink/60">{t('parent.noWeak')}</p>
               ) : (
                 <>
-                  <div dir="rtl" className="mb-3 flex flex-wrap gap-2">
+                  <div dir={course.direction} className="mb-3 flex flex-wrap gap-2">
                     {weak.map((id) => {
                       const m = data.items[id]!;
                       return (
                         <span key={id} className="flex items-center gap-2 rounded-2xl bg-coral-100 px-3 py-1">
-                          <ArabicText className="text-3xl">{getItem(id).glyph}</ArabicText>
+                          <ScriptText courseId={courseIdOf(id)} className="text-3xl">{getItem(id).glyph}</ScriptText>
                           <span dir="ltr" className="text-xs font-bold">✓{m.correctCount} ✗{m.wrongCount}</span>
                         </span>
                       );

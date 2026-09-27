@@ -1,9 +1,9 @@
 import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { getItem } from '@/content/course';
+import { courseIdOf, getItem } from '@/content/course';
 import { sfx } from '@/engine/audio';
 import { createRng, shuffle } from '@/engine/random';
-import { ArabicText } from '@/ui/ArabicText';
+import { ScriptText } from '@/ui/ScriptText';
 import { Feedback } from '../Feedback';
 import type { ActivityProps } from '../types';
 
@@ -12,6 +12,7 @@ const COLORS = ['#fb7185', '#38bdf8', '#a78bfa', '#4ade80', '#fbbf24', '#fb923c'
 /** A5 Pop the Balloon: balloons float up; pop the ones with the letter you hear. */
 export default function PopBalloon({ activity, onDone }: ActivityProps<'pop_balloon'>) {
   const { t } = useTranslation();
+  const courseId = courseIdOf(activity.itemId);
   const balloons = useMemo(() => {
     const rng = createRng(activity.id.length * 31);
     const others = activity.options.filter((o) => o !== activity.itemId);
@@ -73,7 +74,7 @@ export default function PopBalloon({ activity, onDone }: ActivityProps<'pop_ball
                 className={`flex h-[84px] w-[72px] items-center justify-center rounded-[50%] shadow-inner ${wobble === b.key ? 'animate-shake' : ''}`}
                 style={{ background: b.color }}
               >
-                <ArabicText className="text-5xl leading-none text-white drop-shadow">{getItem(b.itemId).glyph}</ArabicText>
+                <ScriptText courseId={courseId} className="text-5xl leading-none text-white drop-shadow">{getItem(b.itemId).glyph}</ScriptText>
               </span>
               <span className="h-10 w-px bg-ink/30" />
             </button>

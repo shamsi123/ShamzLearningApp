@@ -1,6 +1,7 @@
 import { z } from 'zod';
 
-const localized = z.object({ en: z.string().min(1), ar: z.string().min(1) });
+// `en` plus whatever the course's own language key is (`ar`, `hi`, ...) — one schema serves every course.
+const localized = z.object({ en: z.string().min(1) }).catchall(z.string().min(1));
 const lessonId = z.string().regex(/^[a-z]{2}-l\d+-u\d+-l\d+$/);
 const itemId = z.string().regex(/^[a-z]{2}-[a-z]+-[a-z]+$/);
 

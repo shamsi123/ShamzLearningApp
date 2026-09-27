@@ -1,14 +1,21 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import { courses } from '@/content/course';
 import { AVATAR_ANIMALS, AVATAR_COLORS } from '@/lib/progress';
 import { hashSecret, useStore, type Child } from '@/lib/store';
 import { Avatar } from '@/ui/Avatar';
 import { Button } from '@/ui/Button';
+import { ScriptText } from '@/ui/ScriptText';
 import { Screen } from '@/ui/Screen';
 import { PicturePin } from './PicturePin';
 
-/** Create a child profile: nickname, age band, avatar, optional picture-PIN (FR-02). Behind the parent gate. */
+const COURSE_LABEL: Record<string, { native: string; key: string }> = {
+  ar: { native: 'العربية', key: 'welcome.arabic' },
+  hi: { native: 'हिन्दी', key: 'welcome.hindi' },
+};
+
+/** Create a child profile: nickname, age band, avatar, language, optional picture-PIN (FR-02). Behind the parent gate. */
 export default function NewProfileScreen() {
   const { t } = useTranslation();
   const navigate = useNavigate();
@@ -18,6 +25,7 @@ export default function NewProfileScreen() {
   const [ageBand, setAgeBand] = useState<Child['ageBand']>('4-6');
   const [animal, setAnimal] = useState(AVATAR_ANIMALS[0]!);
   const [pin, setPin] = useState<string[]>([]);
+  const [courseId, setCourseId] = useState('ar');
   const color = AVATAR_COLORS[count % 3]!.value;
 
   const create = async () => {
@@ -26,7 +34,7 @@ export default function NewProfileScreen() {
       ageBand,
       avatar: { animal, color, item: 'none' },
       pinHash: pin.length === 3 ? await hashSecret(pin.join('')) : null,
-      courses: ['ar'],
+      courses: [courseId],
     });
     navigate('/profiles');
   };
@@ -55,6 +63,26 @@ export default function NewProfileScreen() {
           />
           <span className="text-sm font-medium text-ink/60">{t('profiles.nicknameHint')}</span>
         </label>
+        <div>
+          <p className="mb-2 font-bold">{t('profiles.chooseLanguage')}</p>
+          <div className="grid grid-cols-2 gap-3">
+            {Object.keys(courses).map((id) => {
+              const label = COURSE_LABEL[id]!;
+              return (
+                <button
+                  key={id}
+                  type="button"
+                  aria-pressed={courseId === id}
+                  onClick={() => setCourseId(id)}
+                  className={`flex flex-col items-center gap-1 rounded-3xl p-4 ${courseId === id ? 'bg-sun-100 ring-4 ring-sun-400' : 'bg-white'}`}
+                >
+                  <ScriptText courseId={id} className="text-3xl font-bold">{label.native}</ScriptText>
+                  <span className="text-sm font-extrabold">{t(label.key)}</span>
+                </button>
+              );
+            })}
+          </div>
+        </div>
         <div>
           <p className="mb-2 font-bold">{t('profiles.ageBand')}</p>
           <div className="grid grid-cols-2 gap-3">

@@ -1,8 +1,8 @@
 import { useMemo, useState } from 'react';
-import { getItem } from '@/content/course';
+import { courseIdOf, directionOf, getItem } from '@/content/course';
 import { sfx, speak } from '@/engine/audio';
 import { createRng, shuffle } from '@/engine/random';
-import { ArabicText } from '@/ui/ArabicText';
+import { ScriptText } from '@/ui/ScriptText';
 import { Feedback, type FeedbackState } from '../Feedback';
 import type { ActivityProps } from '../types';
 
@@ -10,6 +10,7 @@ type Pick = { side: 'letter' | 'picture'; id: string } | null;
 
 /** A3 Match Pairs: tap a letter, then the picture whose word starts with it (or the other way round). */
 export default function MatchPairs({ activity, onDone }: ActivityProps<'match_pairs'>) {
+  const courseId = courseIdOf(activity.itemId);
   const pictures = useMemo(() => shuffle(activity.pairs, createRng(activity.pairs.join('').length)), [activity.pairs]);
   const [pick, setPick] = useState<Pick>(null);
   const [matched, setMatched] = useState<string[]>([]);
@@ -20,7 +21,7 @@ export default function MatchPairs({ activity, onDone }: ActivityProps<'match_pa
   const choose = (side: 'letter' | 'picture', id: string) => {
     if (matched.includes(id)) return;
     const item = getItem(id);
-    speak(side === 'letter' ? item.name.ar : item.example.word, 'ar');
+    speak(side === 'letter' ? item.name[courseId]! : item.example.word, courseId as 'ar' | 'hi');
     if (!pick || pick.side === side) {
       setPick({ side, id });
       return;
@@ -50,7 +51,7 @@ export default function MatchPairs({ activity, onDone }: ActivityProps<'match_pa
 
   return (
     <div className="flex flex-col gap-5 pt-2">
-      <div className="grid grid-cols-2 gap-x-6 gap-y-4" dir="rtl">
+      <div className="grid grid-cols-2 gap-x-6 gap-y-4" dir={directionOf(activity.itemId)}>
         <div className="flex flex-col gap-4">
           {activity.pairs.map((id) => (
             <button
@@ -61,7 +62,7 @@ export default function MatchPairs({ activity, onDone }: ActivityProps<'match_pa
               onClick={() => choose('letter', id)}
               className={`flex h-24 items-center justify-center rounded-blob transition-all ${cls('letter', id)} ${shake === `letter-${id}` ? 'animate-shake' : ''}`}
             >
-              <ArabicText className="text-6xl leading-none">{getItem(id).glyph}</ArabicText>
+              <ScriptText courseId={courseId} className="text-6xl leading-none">{getItem(id).glyph}</ScriptText>
             </button>
           ))}
         </div>

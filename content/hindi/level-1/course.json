@@ -1,0 +1,287 @@
+{
+  "id": "hi",
+  "languageCode": "hi",
+  "direction": "ltr",
+  "mascot": {
+    "emoji": "🐘",
+    "name": "Hathi"
+  },
+  "title": {
+    "en": "Hindi",
+    "hi": "हिन्दी"
+  },
+  "defaultMastery": {
+    "minScore": 0.8,
+    "requireEachNewItem": true,
+    "minTraceAccuracy": 0.7
+  },
+  "levels": [
+    {
+      "id": "hi-l1",
+      "title": {
+        "en": "Letters & Sounds",
+        "hi": "अक्षर और ध्वनियाँ"
+      },
+      "trophy": "🏆",
+      "units": [
+        {
+          "id": "hi-l1-u1",
+          "title": {
+            "en": "Vowels: A, Aa, I, Ii",
+            "hi": "स्वर: अ, आ, इ, ई"
+          },
+          "sticker": "🐘",
+          "lessons": [
+            {
+              "id": "hi-l1-u1-l1",
+              "title": { "en": "Letter A", "hi": "अक्षर अ" },
+              "newItems": ["hi-letter-a"],
+              "reviewItems": []
+            },
+            {
+              "id": "hi-l1-u1-l2",
+              "title": { "en": "Letter Aa", "hi": "अक्षर आ" },
+              "newItems": ["hi-letter-aa"],
+              "reviewItems": ["hi-letter-a"]
+            },
+            {
+              "id": "hi-l1-u1-l3",
+              "title": { "en": "Letter I", "hi": "अक्षर इ" },
+              "newItems": ["hi-letter-i"],
+              "reviewItems": ["hi-letter-a", "hi-letter-aa"]
+            },
+            {
+              "id": "hi-l1-u1-l4",
+              "title": { "en": "Letter Ii", "hi": "अक्षर ई" },
+              "newItems": ["hi-letter-ii"],
+              "reviewItems": ["hi-letter-aa", "hi-letter-i"]
+            }
+          ],
+          "checkpoint": { "id": "hi-l1-u1-cp", "size": 6 }
+        },
+        {
+          "id": "hi-l1-u2",
+          "title": {
+            "en": "Vowels: U, Uu, E",
+            "hi": "स्वर: उ, ऊ, ए"
+          },
+          "sticker": "🦉",
+          "lessons": [
+            {
+              "id": "hi-l1-u2-l1",
+              "title": { "en": "Letter U", "hi": "अक्षर उ" },
+              "newItems": ["hi-letter-u"],
+              "reviewItems": ["hi-letter-i", "hi-letter-ii"]
+            },
+            {
+              "id": "hi-l1-u2-l2",
+              "title": { "en": "Letter Uu", "hi": "अक्षर ऊ" },
+              "newItems": ["hi-letter-uu"],
+              "reviewItems": ["hi-letter-ii", "hi-letter-u"]
+            },
+            {
+              "id": "hi-l1-u2-l3",
+              "title": { "en": "Letter E", "hi": "अक्षर ए" },
+              "newItems": ["hi-letter-e"],
+              "reviewItems": ["hi-letter-u", "hi-letter-uu"]
+            }
+          ],
+          "checkpoint": { "id": "hi-l1-u2-cp", "size": 6 }
+        },
+        {
+          "id": "hi-l1-u3",
+          "title": {
+            "en": "Vowels: Ai, O, Au",
+            "hi": "स्वर: ऐ, ओ, औ"
+          },
+          "sticker": "🌙",
+          "lessons": [
+            {
+              "id": "hi-l1-u3-l1",
+              "title": { "en": "Letter Ai", "hi": "अक्षर ऐ" },
+              "newItems": ["hi-letter-ai"],
+              "reviewItems": ["hi-letter-uu", "hi-letter-e"]
+            },
+            {
+              "id": "hi-l1-u3-l2",
+              "title": { "en": "Letter O", "hi": "अक्षर ओ" },
+              "newItems": ["hi-letter-o"],
+              "reviewItems": ["hi-letter-e", "hi-letter-ai"]
+            },
+            {
+              "id": "hi-l1-u3-l3",
+              "title": { "en": "Letter Au", "hi": "अक्षर औ" },
+              "newItems": ["hi-letter-au"],
+              "reviewItems": ["hi-letter-ai", "hi-letter-o"]
+            }
+          ],
+          "checkpoint": { "id": "hi-l1-u3-cp", "size": 6 }
+        },
+        {
+          "id": "hi-l1-u4",
+          "title": {
+            "en": "The Ka family",
+            "hi": "क वर्ग"
+          },
+          "sticker": "🪷",
+          "lessons": [
+            {
+              "id": "hi-l1-u4-l1",
+              "title": { "en": "Letter Ka", "hi": "अक्षर क" },
+              "newItems": ["hi-letter-ka"],
+              "reviewItems": ["hi-letter-o", "hi-letter-au"]
+            },
+            {
+              "id": "hi-l1-u4-l2",
+              "title": { "en": "Letter Kha", "hi": "अक्षर ख" },
+              "newItems": ["hi-letter-kha"],
+              "reviewItems": ["hi-letter-au", "hi-letter-ka"]
+            },
+            {
+              "id": "hi-l1-u4-l3",
+              "title": { "en": "Letter Ga", "hi": "अक्षर ग" },
+              "newItems": ["hi-letter-ga"],
+              "reviewItems": ["hi-letter-ka", "hi-letter-kha"]
+            },
+            {
+              "id": "hi-l1-u4-l4",
+              "title": { "en": "Letter Gha", "hi": "अक्षर घ" },
+              "newItems": ["hi-letter-gha"],
+              "reviewItems": ["hi-letter-kha", "hi-letter-ga"]
+            }
+          ],
+          "checkpoint": { "id": "hi-l1-u4-cp", "size": 6 }
+        },
+        {
+          "id": "hi-l1-u5",
+          "title": {
+            "en": "The Cha family",
+            "hi": "च वर्ग"
+          },
+          "sticker": "🚩",
+          "lessons": [
+            {
+              "id": "hi-l1-u5-l1",
+              "title": { "en": "Letter Cha", "hi": "अक्षर च" },
+              "newItems": ["hi-letter-cha"],
+              "reviewItems": ["hi-letter-ga", "hi-letter-gha"]
+            },
+            {
+              "id": "hi-l1-u5-l2",
+              "title": { "en": "Letter Chha", "hi": "अक्षर छ" },
+              "newItems": ["hi-letter-chha"],
+              "reviewItems": ["hi-letter-gha", "hi-letter-cha"]
+            },
+            {
+              "id": "hi-l1-u5-l3",
+              "title": { "en": "Letter Ja", "hi": "अक्षर ज" },
+              "newItems": ["hi-letter-ja"],
+              "reviewItems": ["hi-letter-cha", "hi-letter-chha"]
+            },
+            {
+              "id": "hi-l1-u5-l4",
+              "title": { "en": "Letter Jha", "hi": "अक्षर झ" },
+              "newItems": ["hi-letter-jha"],
+              "reviewItems": ["hi-letter-chha", "hi-letter-ja"]
+            }
+          ],
+          "checkpoint": { "id": "hi-l1-u5-cp", "size": 6 }
+        },
+        {
+          "id": "hi-l1-u6",
+          "title": {
+            "en": "Tta & Dda",
+            "hi": "ट और ड"
+          },
+          "sticker": "🍅",
+          "lessons": [
+            {
+              "id": "hi-l1-u6-l1",
+              "title": { "en": "Letter Tta", "hi": "अक्षर ट" },
+              "newItems": ["hi-letter-tta"],
+              "reviewItems": ["hi-letter-ja", "hi-letter-jha"]
+            },
+            {
+              "id": "hi-l1-u6-l2",
+              "title": { "en": "Letter Dda", "hi": "अक्षर ड" },
+              "newItems": ["hi-letter-dda"],
+              "reviewItems": ["hi-letter-jha", "hi-letter-tta"]
+            }
+          ],
+          "checkpoint": { "id": "hi-l1-u6-cp", "size": 6 }
+        },
+        {
+          "id": "hi-l1-u7",
+          "title": {
+            "en": "The Ta family",
+            "hi": "त वर्ग"
+          },
+          "sticker": "🦋",
+          "lessons": [
+            {
+              "id": "hi-l1-u7-l1",
+              "title": { "en": "Letter Ta", "hi": "अक्षर त" },
+              "newItems": ["hi-letter-ta"],
+              "reviewItems": ["hi-letter-tta", "hi-letter-dda"]
+            },
+            {
+              "id": "hi-l1-u7-l2",
+              "title": { "en": "Letter Tha", "hi": "अक्षर थ" },
+              "newItems": ["hi-letter-tha"],
+              "reviewItems": ["hi-letter-dda", "hi-letter-ta"]
+            },
+            {
+              "id": "hi-l1-u7-l3",
+              "title": { "en": "Letter Da", "hi": "अक्षर द" },
+              "newItems": ["hi-letter-da"],
+              "reviewItems": ["hi-letter-ta", "hi-letter-tha"]
+            },
+            {
+              "id": "hi-l1-u7-l4",
+              "title": { "en": "Letter Dha", "hi": "अक्षर ध" },
+              "newItems": ["hi-letter-dha"],
+              "reviewItems": ["hi-letter-tha", "hi-letter-da"]
+            }
+          ],
+          "checkpoint": { "id": "hi-l1-u7-cp", "size": 6 }
+        },
+        {
+          "id": "hi-l1-u8",
+          "title": {
+            "en": "The Pa family",
+            "hi": "प वर्ग"
+          },
+          "sticker": "🐐",
+          "lessons": [
+            {
+              "id": "hi-l1-u8-l1",
+              "title": { "en": "Letter Pa", "hi": "अक्षर प" },
+              "newItems": ["hi-letter-pa"],
+              "reviewItems": ["hi-letter-da", "hi-letter-dha"]
+            },
+            {
+              "id": "hi-l1-u8-l2",
+              "title": { "en": "Letter Pha", "hi": "अक्षर फ" },
+              "newItems": ["hi-letter-pha"],
+              "reviewItems": ["hi-letter-dha", "hi-letter-pa"]
+            },
+            {
+              "id": "hi-l1-u8-l3",
+              "title": { "en": "Letter Ba", "hi": "अक्षर ब" },
+              "newItems": ["hi-letter-ba"],
+              "reviewItems": ["hi-letter-pa", "hi-letter-pha"]
+            },
+            {
+              "id": "hi-l1-u8-l4",
+              "title": { "en": "Letter Bha", "hi": "अक्षर भ" },
+              "newItems": ["hi-letter-bha"],
+              "reviewItems": ["hi-letter-pha", "hi-letter-ba"]
+            }
+          ],
+          "checkpoint": { "id": "hi-l1-u8-cp", "size": 6 }
+        }
+      ],
+      "levelTest": { "id": "hi-l1-test", "size": 10 }
+    }
+  ]
+}

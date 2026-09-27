@@ -1,5 +1,5 @@
 import type { TFunction } from 'i18next';
-import { getItem } from '@/content/course';
+import { courseIdOf, getItem } from '@/content/course';
 import type { Activity } from '@/content/schema';
 import type { SpeechPart } from '@/engine/audio';
 import type { UiLang } from '@/i18n';
@@ -7,11 +7,12 @@ import type { UiLang } from '@/i18n';
 /** Spoken instruction + target sound for an activity. Replayed by the big 🔊 button (FR-15). */
 export function activitySpeech(activity: Activity, t: TFunction, lang: UiLang): SpeechPart[] {
   const item = getItem(activity.itemId);
-  const name = { text: item.name.ar, lang: 'ar' as const };
+  const itemLang = courseIdOf(item.id) as 'ar' | 'hi';
+  const name = { text: item.name[itemLang]!, lang: itemLang };
   const say = (key: string, vars: Record<string, string> = {}) => ({ text: t(key, vars), lang });
   switch (activity.type) {
     case 'learn_card':
-      return [say('act.learn.prompt', { name: item.name.en }), name, { text: item.example.word, lang: 'ar' }];
+      return [say('act.learn.prompt', { name: item.name.en }), name, { text: item.example.word, lang: itemLang }];
     case 'listen_tap':
       return [say('act.listenTap.prompt'), name];
     case 'trace':
@@ -19,13 +20,13 @@ export function activitySpeech(activity: Activity, t: TFunction, lang: UiLang): 
     case 'match_pairs':
       return [say('act.match.prompt')];
     case 'drag_drop':
-      return [say('act.drag.prompt', { meaning: item.example.meaning }), { text: item.example.word, lang: 'ar' }];
+      return [say('act.drag.prompt', { meaning: item.example.meaning }), { text: item.example.word, lang: itemLang }];
     case 'pop_balloon':
       return [say('act.pop.prompt'), name];
     case 'find_letter':
       return [say('act.find.prompt', { name: item.name.en }), name];
     case 'story_card':
-      return [say('act.story.prompt'), ...activity.items.map((id) => ({ text: getItem(id).example.word, lang: 'ar' as const }))];
+      return [say('act.story.prompt'), ...activity.items.map((id) => ({ text: getItem(id).example.word, lang: courseIdOf(id) as 'ar' | 'hi' }))];
   }
 }
 

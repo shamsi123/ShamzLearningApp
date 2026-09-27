@@ -1,14 +1,28 @@
-import courseJson from '@content/arabic/level-1/course.json';
-import itemsJson from '@content/arabic/level-1/items.json';
+import arabicCourseJson from '@content/arabic/level-1/course.json';
+import arabicItemsJson from '@content/arabic/level-1/items.json';
+import hindiCourseJson from '@content/hindi/level-1/course.json';
+import hindiItemsJson from '@content/hindi/level-1/items.json';
 import { courseSchema, itemsFileSchema, type CourseDef, type LearningItem, type LessonDef, type UnitDef } from './schema';
 import { DEFAULT_MASTERY, type MasteryConfig } from '@/engine/mastery';
 
-export const arabicCourse: CourseDef = courseSchema.parse(courseJson);
-export const arabicItems: LearningItem[] = itemsFileSchema.parse(itemsJson).items;
+export const arabicCourse: CourseDef = courseSchema.parse(arabicCourseJson);
+export const arabicItems: LearningItem[] = itemsFileSchema.parse(arabicItemsJson).items;
+export const hindiCourse: CourseDef = courseSchema.parse(hindiCourseJson);
+export const hindiItems: LearningItem[] = itemsFileSchema.parse(hindiItemsJson).items;
 
-export const courses: Record<string, CourseDef> = { ar: arabicCourse };
-const itemsByCourse: Record<string, LearningItem[]> = { ar: arabicItems };
-const itemIndex = new Map(arabicItems.map((i) => [i.id, i]));
+export const courses: Record<string, CourseDef> = { ar: arabicCourse, hi: hindiCourse };
+const itemsByCourse: Record<string, LearningItem[]> = { ar: arabicItems, hi: hindiItems };
+const itemIndex = new Map([...arabicItems, ...hindiItems].map((i) => [i.id, i]));
+
+/** The course an item (or lesson/unit/checkpoint id) belongs to — every id is namespaced `<courseId>-...`. */
+export function courseIdOf(id: string): string {
+  return id.slice(0, id.indexOf('-'));
+}
+
+/** Reading direction for an item's script, straight from its course's own content. */
+export function directionOf(id: string): 'rtl' | 'ltr' {
+  return courses[courseIdOf(id)]?.direction ?? 'ltr';
+}
 
 export function getItem(id: string): LearningItem {
   const item = itemIndex.get(id);
@@ -64,8 +78,8 @@ export function masteryFor(node: JourneyNode): MasteryConfig {
   return { ...base, ...node.lesson.mastery };
 }
 
-export function nodeTitle(node: JourneyNode, lang: 'en' | 'ar'): string {
-  if (node.kind === 'lesson') return node.lesson.title[lang];
-  if (node.kind === 'checkpoint') return node.unit.title[lang];
-  return courses[node.courseId]!.levels.find((l) => l.id === node.levelId)!.title[lang];
+export function nodeTitle(node: JourneyNode, lang: string): string {
+  if (node.kind === 'lesson') return node.lesson.title[lang]!;
+  if (node.kind === 'checkpoint') return node.unit.title[lang]!;
+  return courses[node.courseId]!.levels.find((l) => l.id === node.levelId)!.title[lang]!;
 }

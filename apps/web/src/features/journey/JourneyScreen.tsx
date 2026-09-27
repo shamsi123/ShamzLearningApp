@@ -1,12 +1,12 @@
 import { useEffect, useRef } from 'react';
 import { Navigate, useNavigate, useParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { courses, getItem, journeyNodes, type JourneyNode } from '@/content/course';
+import { courseIdOf, courses, getItem, journeyNodes, type JourneyNode } from '@/content/course';
 import { nodeStatuses, totalStars, type NodeStatus } from '@/lib/progress';
 import { useActiveChild } from '@/lib/store';
-import { ArabicText } from '@/ui/ArabicText';
 import { Avatar } from '@/ui/Avatar';
 import { BottomNav } from '@/ui/BottomNav';
+import { ScriptText } from '@/ui/ScriptText';
 import { Stars } from '@/ui/Stars';
 
 // Horizontal offsets that make the path wind (logical: positive = towards the end side).
@@ -15,7 +15,8 @@ const WAVE = [0, 70, 105, 70, 0, -70, -105, -70];
 function NodeFace({ node }: { node: JourneyNode }) {
   if (node.kind === 'checkpoint') return <span className="text-4xl">🏁</span>;
   if (node.kind === 'level_test') return <span className="text-4xl">🏆</span>;
-  return <ArabicText className="text-5xl leading-none">{getItem(node.lesson.newItems[0]!).glyph}</ArabicText>;
+  const glyph = getItem(node.lesson.newItems[0]!);
+  return <ScriptText courseId={courseIdOf(glyph.id)} className="text-5xl leading-none">{glyph.glyph}</ScriptText>;
 }
 
 const STYLES: Record<NodeStatus, string> = {
@@ -42,7 +43,7 @@ export default function JourneyScreen() {
   const states = nodeStatuses(courseId, data);
   const nodes = journeyNodes(courseId);
   const current = nodes.find((n) => states[n.id] === 'available' || states[n.id] === 'in_progress');
-  const lang = i18n.language === 'ar' ? 'ar' : 'en';
+  const lang = i18n.language === course.languageCode ? course.languageCode : 'en';
   let unitNo = 0;
 
   return (

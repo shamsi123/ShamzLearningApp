@@ -16,6 +16,7 @@ body {
 }
 button { touch-action: manipulation; user-select: none; -webkit-user-select: none; }
 .ar { font-family: 'Baloo Bhaijaan 2', 'Noto Naskh Arabic', serif; font-feature-settings: 'calt', 'liga'; }
+.hi { font-family: 'Baloo 2', 'Noto Sans Devanagari', sans-serif; }
 .high-contrast { filter: contrast(1.25) saturate(1.1); }
 
 @layer utilities {

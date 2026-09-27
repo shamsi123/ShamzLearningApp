@@ -1,12 +1,12 @@
 import { DndContext, KeyboardSensor, PointerSensor, useDraggable, useDroppable, useSensor, useSensors, type DragEndEvent } from '@dnd-kit/core';
 import { useState } from 'react';
-import { getItem } from '@/content/course';
-import { ArabicText } from '@/ui/ArabicText';
+import { courseIdOf, directionOf, getItem } from '@/content/course';
+import { ScriptText } from '@/ui/ScriptText';
 import { Feedback } from '../Feedback';
 import type { ActivityProps } from '../types';
 import { useAnswer } from '../useAnswer';
 
-function Tile({ id, glyph, label, shaking, disabled }: { id: string; glyph: string; label: string; shaking: boolean; disabled: boolean }) {
+function Tile({ id, courseId, glyph, label, shaking, disabled }: { id: string; courseId: string; glyph: string; label: string; shaking: boolean; disabled: boolean }) {
   const { attributes, listeners, setNodeRef, transform, isDragging } = useDraggable({ id, disabled });
   return (
     <button
@@ -19,12 +19,12 @@ function Tile({ id, glyph, label, shaking, disabled }: { id: string; glyph: stri
       style={{ transform: transform ? `translate3d(${transform.x}px, ${transform.y}px, 0)` : undefined, touchAction: 'none' }}
       className={`flex h-24 w-24 items-center justify-center rounded-blob bg-white shadow-[0_6px_0_#ddd6fe] ${isDragging ? 'z-10 scale-110 shadow-xl' : ''} ${shaking ? 'animate-shake' : ''}`}
     >
-      <ArabicText className="text-6xl leading-none">{glyph}</ArabicText>
+      <ScriptText courseId={courseId} className="text-6xl leading-none">{glyph}</ScriptText>
     </button>
   );
 }
 
-function Basket({ emoji, word, filled }: { emoji: string; word: string; filled: string | null }) {
+function Basket({ courseId, emoji, word, filled }: { courseId: string; emoji: string; word: string; filled: string | null }) {
   const { setNodeRef, isOver } = useDroppable({ id: 'basket' });
   return (
     <div
@@ -35,9 +35,9 @@ function Basket({ emoji, word, filled }: { emoji: string; word: string; filled: 
       }`}
     >
       <span className="text-7xl">{emoji}</span>
-      <ArabicText className="text-3xl font-bold text-ink/70">{word}</ArabicText>
+      <ScriptText courseId={courseId} className="text-3xl font-bold text-ink/70">{word}</ScriptText>
       <div className="flex h-24 w-24 items-center justify-center rounded-3xl bg-white/70 text-5xl">
-        {filled ? <ArabicText className="text-6xl text-leaf-500 animate-pop-in">{filled}</ArabicText> : '🧺'}
+        {filled ? <ScriptText courseId={courseId} className="text-6xl text-leaf-500 animate-pop-in">{filled}</ScriptText> : '🧺'}
       </div>
     </div>
   );
@@ -46,6 +46,7 @@ function Basket({ emoji, word, filled }: { emoji: string; word: string; filled: 
 /** A4 Drag & Drop: drag the letter that starts the pictured word into the basket. */
 export default function DragDrop({ activity, onDone }: ActivityProps<'drag_drop'>) {
   const target = getItem(activity.itemId);
+  const courseId = courseIdOf(target.id);
   const { feedback, answer, finished } = useAnswer(activity, onDone);
   const [filled, setFilled] = useState<string | null>(null);
   const [shake, setShake] = useState<string | null>(null);
@@ -66,12 +67,12 @@ export default function DragDrop({ activity, onDone }: ActivityProps<'drag_drop'
   return (
     <DndContext sensors={sensors} onDragEnd={onDragEnd}>
       <div className="flex flex-col items-center gap-6 pt-2">
-        <Basket emoji={target.example.emoji} word={target.example.word} filled={filled} />
-        <div dir="rtl" className="flex justify-center gap-4">
+        <Basket courseId={courseId} emoji={target.example.emoji} word={target.example.word} filled={filled} />
+        <div dir={directionOf(target.id)} className="flex justify-center gap-4">
           {activity.options
             .filter((id) => !(filled && id === activity.itemId))
             .map((id) => (
-              <Tile key={id} id={id} glyph={getItem(id).glyph} label={getItem(id).name.en} shaking={shake === id} disabled={finished} />
+              <Tile key={id} id={id} courseId={courseId} glyph={getItem(id).glyph} label={getItem(id).name.en} shaking={shake === id} disabled={finished} />
             ))}
         </div>
         <Feedback state={feedback} />
