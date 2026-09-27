@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { courseIdOf, directionOf, getItem } from '@/content/course';
 import { speak } from '@/engine/audio';
+import { Picture } from '@/ui/Picture';
 import { ScriptText } from '@/ui/ScriptText';
 import { Button } from '@/ui/Button';
 import type { ActivityProps } from '../types';
@@ -31,7 +32,7 @@ export default function StoryCard({ activity, onDone }: ActivityProps<'story_car
                 heard.includes(id) ? 'ring-4 ring-sky2-400' : ''
               }`}
             >
-              <span className="text-6xl">{item.example.emoji}</span>
+              <span className="text-6xl"><Picture value={item.example.emoji} alt={item.example.meaning} /></span>
               <ScriptText courseId={courseId} className="text-2xl font-bold">{item.example.word}</ScriptText>
             </button>
           );

@@ -1,6 +1,7 @@
 import { DndContext, KeyboardSensor, PointerSensor, useDraggable, useDroppable, useSensor, useSensors, type DragEndEvent } from '@dnd-kit/core';
 import { useState } from 'react';
 import { courseIdOf, directionOf, getItem } from '@/content/course';
+import { Picture } from '@/ui/Picture';
 import { ScriptText } from '@/ui/ScriptText';
 import { Feedback } from '../Feedback';
 import type { ActivityProps } from '../types';
@@ -34,7 +35,7 @@ function Basket({ courseId, emoji, word, filled }: { courseId: string; emoji: st
         isOver ? 'border-grape-500 bg-grape-100' : 'border-sun-400 bg-sun-100'
       }`}
     >
-      <span className="text-7xl">{emoji}</span>
+      <span className="text-7xl"><Picture value={emoji} alt={word} /></span>
       <ScriptText courseId={courseId} className="text-3xl font-bold text-ink/70">{word}</ScriptText>
       <div className="flex h-24 w-24 items-center justify-center rounded-3xl bg-white/70 text-5xl">
         {filled ? <ScriptText courseId={courseId} className="text-6xl text-leaf-500 animate-pop-in">{filled}</ScriptText> : '🧺'}

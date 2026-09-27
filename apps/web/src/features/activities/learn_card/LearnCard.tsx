@@ -4,6 +4,7 @@ import { courseIdOf, getItem } from '@/content/course';
 import { speakWithHighlight, speakWithLetterHighlight } from '@/engine/audio';
 import { clusters, positionForms } from '@/lib/arabic';
 import { Button } from '@/ui/Button';
+import { Picture } from '@/ui/Picture';
 import { ScriptText } from '@/ui/ScriptText';
 import type { ActivityProps } from '../types';
 
@@ -52,7 +53,7 @@ export default function LearnCard({ activity, onDone }: ActivityProps<'learn_car
         }
         className="flex w-full items-center justify-between gap-3 rounded-blob bg-sun-100 px-5 py-3 active:scale-95"
       >
-        <span className="text-6xl">{item.example.emoji}</span>
+        <span className="text-6xl"><Picture value={item.example.emoji} alt={item.example.meaning} /></span>
         <span className="flex flex-col items-end">
           <ScriptText courseId={courseId} data-testid="example-word" className="text-5xl font-bold text-ink">
             {wordClusters.map((c, i) => (

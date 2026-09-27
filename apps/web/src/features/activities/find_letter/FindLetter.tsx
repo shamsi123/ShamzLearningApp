@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react';
 import { courseIdOf, courseItems, directionOf, getItem } from '@/content/course';
 import { letterSegments, sameLetter } from '@/lib/arabic';
+import { Picture } from '@/ui/Picture';
 import { ScriptText } from '@/ui/ScriptText';
 import { Feedback } from '../Feedback';
 import type { ActivityProps } from '../types';
@@ -18,7 +19,7 @@ export default function FindLetter({ activity, onDone }: ActivityProps<'find_let
 
   return (
     <div className="flex flex-col items-center gap-6 pt-2">
-      {picture && <div className="text-7xl">{picture.example.emoji}</div>}
+      {picture && <div className="text-7xl"><Picture value={picture.example.emoji} alt={picture.example.meaning} /></div>}
       <div className="flex items-center gap-3 rounded-blob bg-white px-6 py-4 shadow-[0_6px_0_#ddd6fe]">
         <ScriptText courseId={courseId} className="text-4xl text-grape-600">{target.glyph}</ScriptText>
         <span className="text-2xl">🔍</span>

@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react';
 import { courseIdOf, directionOf, getItem } from '@/content/course';
 import { sfx, speak } from '@/engine/audio';
 import { createRng, shuffle } from '@/engine/random';
+import { Picture } from '@/ui/Picture';
 import { ScriptText } from '@/ui/ScriptText';
 import { Feedback, type FeedbackState } from '../Feedback';
 import type { ActivityProps } from '../types';
@@ -76,7 +77,7 @@ export default function MatchPairs({ activity, onDone }: ActivityProps<'match_pa
               onClick={() => choose('picture', id)}
               className={`flex h-24 items-center justify-center rounded-blob text-6xl transition-all ${cls('picture', id)} ${shake === `picture-${id}` ? 'animate-shake' : ''}`}
             >
-              {matched.includes(id) ? '✅' : getItem(id).example.emoji}
+              {matched.includes(id) ? '✅' : <Picture value={getItem(id).example.emoji} alt={getItem(id).example.meaning} />}
             </button>
           ))}
         </div>
