@@ -50,6 +50,8 @@ export interface ChildData {
   session: LessonSession | null;
   queue: ActivityAttempt[];
   extraReview: string[];
+  /** Course ids for which the one-time Welcome + Meet-the-Alphabet intro gate has been completed. */
+  courseIntro: string[];
 }
 
 export const emptyChildData = (): ChildData => ({
@@ -63,6 +65,7 @@ export const emptyChildData = (): ChildData => ({
   session: null,
   queue: [],
   extraReview: [],
+  courseIntro: [],
 });
 
 /** Journey states (FR-10, FR-12, FR-14): a node opens only after the previous one is mastered. */

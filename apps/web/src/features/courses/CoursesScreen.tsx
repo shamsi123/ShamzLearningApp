@@ -46,7 +46,7 @@ export default function CoursesScreen() {
               <button
                 type="button"
                 data-testid={card.testId}
-                onClick={() => navigate(`/journey/${courseId}`)}
+                onClick={() => navigate(data.courseIntro.includes(courseId) ? `/journey/${courseId}` : `/welcome/${courseId}`)}
                 className={`relative flex items-center gap-4 overflow-hidden rounded-blob p-5 text-start active:translate-y-1 ${card.className}`}
               >
                 <span className="text-8xl">{card.emoji}</span>

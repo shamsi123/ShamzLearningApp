@@ -18,6 +18,7 @@ const Profiles = lazy(() => import('@/features/profiles/ProfilesScreen'));
 const NewProfile = lazy(() => import('@/features/profiles/NewProfileScreen'));
 const PinEntry = lazy(() => import('@/features/profiles/PinScreen'));
 const Courses = lazy(() => import('@/features/courses/CoursesScreen'));
+const CourseWelcome = lazy(() => import('@/features/courses/CourseWelcomeScreen'));
 const Alphabet = lazy(() => import('@/features/courses/AlphabetScreen'));
 const Journey = lazy(() => import('@/features/journey/JourneyScreen'));
 const Lesson = lazy(() => import('@/features/lesson/LessonScreen'));
@@ -86,6 +87,7 @@ function Shell() {
           <Route path="/profiles/new" element={<RequireParent><Gated><NewProfile /></Gated></RequireParent>} />
           <Route path="/profiles/:childId/pin" element={<RequireParent><PinEntry /></RequireParent>} />
           <Route path="/courses" element={<RequireChild><Courses /></RequireChild>} />
+          <Route path="/welcome/:courseId" element={<RequireChild><CourseWelcome /></RequireChild>} />
           <Route path="/alphabet/:courseId" element={<RequireChild><Alphabet /></RequireChild>} />
           <Route path="/journey/:courseId" element={<RequireChild><Journey /></RequireChild>} />
           <Route path="/lesson/:nodeId" element={<RequireChild><Lesson /></RequireChild>} />

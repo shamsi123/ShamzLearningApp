@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { courseItems, courses } from '@/content/course';
 import type { LearningItem } from '@/content/schema';
@@ -30,8 +30,6 @@ export default function AlphabetScreen() {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const { courseId = 'ar' } = useParams();
-  const [params] = useSearchParams();
-  const next = params.get('next');
   const [downloading, setDownloading] = useState(false);
   const course = courses[courseId];
   const items = courseItems(courseId);
@@ -40,8 +38,6 @@ export default function AlphabetScreen() {
   const rows = chunk(items, ROW_SIZE);
 
   const say = (item: LearningItem) => speak(item.name[courseId] ?? item.glyph, courseId as 'ar' | 'hi');
-
-  const goToLessons = () => navigate(next ? `/lesson/${next}` : `/journey/${courseId}`);
 
   const download = async () => {
     setDownloading(true);
@@ -63,7 +59,7 @@ export default function AlphabetScreen() {
   };
 
   return (
-    <Screen title={t('alphabet.title')} back={next ? `/journey/${courseId}` : '/courses'} bg="bg-cream">
+    <Screen title={t('alphabet.title')} back={() => navigate(-1)} bg="bg-cream">
       <div className="flex justify-center py-3">
         <Mascot emoji={course.mascot.emoji} says={t('alphabet.intro', { count: items.length })} speakLang="en" size="sm" />
       </div>
@@ -99,8 +95,8 @@ export default function AlphabetScreen() {
         ))}
       </div>
       <div dir={course.direction} className="pb-6 text-center">
-        <Button block onClick={goToLessons}>
-          {t(next ? 'alphabet.beginFirstLesson' : 'alphabet.startLessons')}
+        <Button block onClick={() => navigate(`/journey/${courseId}`)}>
+          {t('alphabet.startLessons')}
         </Button>
       </div>
     </Screen>

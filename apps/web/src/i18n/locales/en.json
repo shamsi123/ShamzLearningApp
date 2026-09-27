@@ -80,6 +80,11 @@
     "wrong": "Email or PIN not recognized on this device.",
     "back": "Sign in with password instead"
   },
+  "courseWelcome": {
+    "greeting": "Hello! Let's learn {{language}} together!",
+    "body": "First, let's meet all the letters and how they sound.",
+    "cta": "Meet the alphabet"
+  },
   "alphabet": {
     "title": "Meet the Alphabet",
     "intro": "Here are all {{count}} letters! Tap one to hear it, then trace it below.",
@@ -87,7 +92,6 @@
     "repaint": "Clear & try again",
     "linkFromCourses": "Meet the alphabet",
     "startLessons": "Ready? Start the lessons →",
-    "beginFirstLesson": "Ready? Begin your first lesson →",
     "optionalHint": "Tracing here is just for fun — no need to finish it all now. You'll practise writing every letter properly as you go through the lessons.",
     "download": "Download practice sheet (Word)",
     "preparing": "Preparing…",

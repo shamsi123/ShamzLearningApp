@@ -113,6 +113,8 @@ interface State {
   waterGarden(): void;
   overrideUnlock(childId: string, nodeId: string): void;
   assignExtraReview(childId: string, itemIds: string[]): void;
+  /** Marks the Welcome + Meet-the-Alphabet gate as done for the active child, for this course. */
+  markIntroSeen(courseId: string): void;
 
   /** Sends every queued attempt batch to the backend (FR-42). No-op offline or signed out locally-only. */
   flushQueue(): Promise<void>;
@@ -404,6 +406,8 @@ export const useStore = create<State>()(
           const d = s.data[childId] ?? emptyChildData();
           return { data: { ...s.data, [childId]: { ...d, extraReview: [...new Set([...d.extraReview, ...itemIds])] } } };
         }),
+      markIntroSeen: (courseId) =>
+        set((s) => patchChild(s, (d) => (d.courseIntro.includes(courseId) ? d : { ...d, courseIntro: [...d.courseIntro, courseId] }))),
 
       flushQueue: async () => {
         if (!api.apiEnabled || !get().backendAuth) return;
