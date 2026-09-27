@@ -44,9 +44,12 @@ export default function NewProfileScreen() {
       title={t('profiles.addTitle')}
       back="/profiles"
       footer={
-        <Button block variant="success" disabled={!nickname.trim() || count >= 4} onClick={() => void create()}>
-          {t('profiles.create')}
-        </Button>
+        <>
+          {count >= 4 && <p className="mb-2 text-center font-bold text-coral-500">{t('profiles.maxReached')}</p>}
+          <Button block variant="success" disabled={!nickname.trim() || count >= 4} onClick={() => void create()}>
+            {t('profiles.create')}
+          </Button>
+        </>
       }
     >
       <div className="flex flex-col gap-5 pb-4">

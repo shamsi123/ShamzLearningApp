@@ -112,6 +112,7 @@
     "enterPin": "Tap your 3 secret pictures",
     "pinWrong": "Let's try those pictures again!",
     "max": "Up to 4 children",
+    "maxReached": "You already have 4 children — delete one to add another.",
     "create": "Create profile"
   },
   "courses": {
