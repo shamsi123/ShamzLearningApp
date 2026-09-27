@@ -80,6 +80,14 @@
     "wrong": "Email or PIN not recognized on this device.",
     "back": "Sign in with password instead"
   },
+  "alphabet": {
+    "title": "Meet the Alphabet",
+    "intro": "Here are all {{count}} letters! Tap one to hear it, then trace it below.",
+    "practice": "Trace the letter",
+    "repaint": "Clear & try again",
+    "linkFromCourses": "Meet the alphabet",
+    "startLessons": "Ready? Start the lessons →"
+  },
   "gate": {
     "title": "Grown-ups only",
     "hold": "Press and hold for 3 seconds",

@@ -42,24 +42,33 @@ export default function CoursesScreen() {
           const lessons = journeyNodes(courseId).filter((n) => n.kind === 'lesson');
           const done = lessons.filter((n) => data.lessons[n.id]?.status === 'mastered').length;
           return (
-            <button
-              key={courseId}
-              type="button"
-              data-testid={card.testId}
-              onClick={() => navigate(`/journey/${courseId}`)}
-              className={`relative flex items-center gap-4 overflow-hidden rounded-blob p-5 text-start active:translate-y-1 ${card.className}`}
-            >
-              <span className="text-8xl">{card.emoji}</span>
-              <span className="flex flex-1 flex-col">
-                <ScriptText courseId={courseId} className="text-4xl font-extrabold text-white drop-shadow">{card.nativeTitle}</ScriptText>
-                <span className="text-2xl font-extrabold">{t(`welcome.${courseId === 'ar' ? 'arabic' : 'hindi'}`)}</span>
-                <span className="text-base font-bold opacity-80">{t(card.descKey)}</span>
-                <span className="mt-2 h-3 overflow-hidden rounded-full bg-white/50">
-                  <span className="block h-full rounded-full bg-white" style={{ width: `${lessons.length ? (done / lessons.length) * 100 : 0}%` }} />
+            <div key={courseId} className="flex flex-col gap-2">
+              <button
+                type="button"
+                data-testid={card.testId}
+                onClick={() => navigate(`/journey/${courseId}`)}
+                className={`relative flex items-center gap-4 overflow-hidden rounded-blob p-5 text-start active:translate-y-1 ${card.className}`}
+              >
+                <span className="text-8xl">{card.emoji}</span>
+                <span className="flex flex-1 flex-col">
+                  <ScriptText courseId={courseId} className="text-4xl font-extrabold text-white drop-shadow">{card.nativeTitle}</ScriptText>
+                  <span className="text-2xl font-extrabold">{t(`welcome.${courseId === 'ar' ? 'arabic' : 'hindi'}`)}</span>
+                  <span className="text-base font-bold opacity-80">{t(card.descKey)}</span>
+                  <span className="mt-2 h-3 overflow-hidden rounded-full bg-white/50">
+                    <span className="block h-full rounded-full bg-white" style={{ width: `${lessons.length ? (done / lessons.length) * 100 : 0}%` }} />
+                  </span>
+                  <span className="text-sm font-bold">{t('courses.lessonsDone', { done, total: lessons.length })}</span>
                 </span>
-                <span className="text-sm font-bold">{t('courses.lessonsDone', { done, total: lessons.length })}</span>
-              </span>
-            </button>
+              </button>
+              <button
+                type="button"
+                data-testid={`alphabet-${courseId}`}
+                onClick={() => navigate(`/alphabet/${courseId}`)}
+                className="self-start rounded-full bg-white px-4 py-2 text-sm font-extrabold text-grape-700 shadow-sm active:translate-y-1"
+              >
+                📖 {t('alphabet.linkFromCourses')}
+              </button>
+            </div>
           );
         })}
       </div>

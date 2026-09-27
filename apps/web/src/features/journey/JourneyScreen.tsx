@@ -56,6 +56,14 @@ export default function JourneyScreen() {
           <div className="text-xl font-extrabold">{course.title[lang]}</div>
           <div className="text-sm font-bold text-ink/60">{course.levels[0]!.title[lang]}</div>
         </div>
+        <button
+          type="button"
+          aria-label={t('alphabet.title')}
+          onClick={() => navigate(`/alphabet/${courseId}`)}
+          className="flex h-11 w-11 items-center justify-center rounded-full bg-white text-xl shadow-sm"
+        >
+          📖
+        </button>
         <span className="rounded-full bg-sun-100 px-3 py-1 text-lg font-extrabold" aria-label={t('parent.stars')}>
           ⭐ {totalStars(data)}
         </span>
