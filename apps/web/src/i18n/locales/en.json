@@ -36,7 +36,49 @@
     "noAccount": "Create a new account",
     "wrongCredentials": "That email and password don't match.",
     "invalid": "Please enter a valid email and a password of 8+ characters, and tick the consent box.",
-    "adminAccess": "Continue as admin (skip sign-up)"
+    "adminAccess": "Continue as admin (skip sign-up)",
+    "pinSignIn": "Sign in with a caregiver PIN",
+    "enroll": "Enroll a caregiver"
+  },
+  "enroll": {
+    "title": "Enroll a caregiver",
+    "adminOnly": "Only the admin account can enroll new caregivers.",
+    "adminEmail": "Admin email",
+    "adminPassword": "Admin password",
+    "verifyAdmin": "Verify",
+    "notAdmin": "That's not the admin account.",
+    "wrongCredentials": "That email and password don't match.",
+    "memberEmail": "Caregiver's email",
+    "generate": "Generate code",
+    "shareTitle": "Share this with {{email}}",
+    "shareBody": "Send them this code or link any way you like — text, call, in person. It expires in 30 minutes and only works on this device.",
+    "code": "Code",
+    "link": "Link",
+    "copy": "Copy",
+    "copied": "Copied!",
+    "another": "Enroll another"
+  },
+  "enrollVerify": {
+    "title": "Set your PIN",
+    "body": "Enter the code you were given and choose a PIN to sign in on this device from now on.",
+    "email": "Your email",
+    "code": "Code",
+    "pin": "Choose a PIN",
+    "pinConfirm": "Confirm PIN",
+    "pinHint": "4–6 digits",
+    "submit": "Set PIN & finish",
+    "invalid": "That code is invalid or has expired.",
+    "mismatch": "PINs don't match.",
+    "success": "You're enrolled! Sign in any time with your email and PIN.",
+    "signIn": "Sign in now"
+  },
+  "memberSignIn": {
+    "title": "Caregiver PIN sign-in",
+    "email": "Email",
+    "pin": "PIN",
+    "submit": "Sign in",
+    "wrong": "Email or PIN not recognized on this device.",
+    "back": "Sign in with password instead"
   },
   "gate": {
     "title": "Grown-ups only",

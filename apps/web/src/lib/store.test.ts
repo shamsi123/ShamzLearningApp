@@ -44,3 +44,36 @@ describe('store: quiz completion', () => {
     expect(s.children).toHaveLength(0);
   });
 });
+
+describe('store: caregiver enrollment', () => {
+  beforeEach(() => {
+    useStore.setState({ parent: null, parentSignedIn: false, enrolledMembers: {}, pendingEnrollments: {} });
+  });
+
+  it('a code redeemed with the right email lets the caregiver set a PIN and sign in with it', async () => {
+    const code = useStore.getState().startEnrollment('Gran@Example.com');
+    await expect(useStore.getState().memberSignIn('gran@example.com', '1234')).resolves.toBe(false);
+
+    const ok = await useStore.getState().verifyEnrollment('gran@example.com', code, '1234');
+    expect(ok).toBe(true);
+
+    await expect(useStore.getState().memberSignIn('gran@example.com', '0000')).resolves.toBe(false);
+    await expect(useStore.getState().memberSignIn('gran@example.com', '1234')).resolves.toBe(true);
+    expect(useStore.getState().parentSignedIn).toBe(true);
+  });
+
+  it('rejects the wrong code and a code that has expired', async () => {
+    const code = useStore.getState().startEnrollment('gran@example.com');
+    await expect(useStore.getState().verifyEnrollment('gran@example.com', '000000', '1234')).resolves.toBe(false);
+
+    useStore.setState((s) => ({
+      pendingEnrollments: { ...s.pendingEnrollments, 'gran@example.com': { code, createdAt: new Date(Date.now() - 31 * 60 * 1000).toISOString() } },
+    }));
+    await expect(useStore.getState().verifyEnrollment('gran@example.com', code, '1234')).resolves.toBe(false);
+  });
+
+  it('a code only works for the email it was issued to', async () => {
+    const code = useStore.getState().startEnrollment('gran@example.com');
+    await expect(useStore.getState().verifyEnrollment('other@example.com', code, '1234')).resolves.toBe(false);
+  });
+});

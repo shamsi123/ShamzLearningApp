@@ -49,6 +49,22 @@ export interface BackendAuth {
   refresh: string;
 }
 
+/** Only this account can enroll caregivers (checked against the real, already-registered parent login). */
+export const ADMIN_EMAIL = 'shamsisr@gmail.com';
+
+export interface EnrolledMember {
+  email: string;
+  pinHash: string;
+  enrolledAt: string;
+}
+
+interface PendingEnrollment {
+  code: string;
+  createdAt: string;
+}
+
+const ENROLLMENT_CODE_TTL_MS = 30 * 60 * 1000;
+
 interface State {
   parent: Parent | null;
   parentSignedIn: boolean;
@@ -57,6 +73,9 @@ interface State {
   activeChildId: string | null;
   data: Record<string, ChildData>;
   settings: Record<string, ChildSettings>;
+  /** Caregivers the admin has enrolled for quick PIN sign-in on this device (keyed by lowercase email). */
+  enrolledMembers: Record<string, EnrolledMember>;
+  pendingEnrollments: Record<string, PendingEnrollment>;
 
   /**
    * Local-first auth (works fully offline). When `VITE_API_URL` is configured, both also make a
@@ -67,6 +86,16 @@ interface State {
   signIn(email: string, password: string): Promise<boolean>;
   /** One-tap access for the site owner/tester: no email, no backend call, purely local. */
   adminSignIn(): void;
+  /**
+   * Admin-only (FR: caregiver enrollment). Generates a one-time numeric code for `email`, valid 30
+   * minutes; the admin shares it with the caregiver by whatever channel they like (there's no email
+   * sending — this app has no backend deployed to send it from). Returns the code.
+   */
+  startEnrollment(email: string): string;
+  /** The caregiver's half: redeems the code and sets the PIN they'll sign in with from now on. */
+  verifyEnrollment(email: string, code: string, pin: string): Promise<boolean>;
+  /** Caregiver sign-in with email + PIN, in place of the admin's email + password. */
+  memberSignIn(email: string, pin: string): Promise<boolean>;
   signOut(): void;
   addChild(child: Omit<Child, 'id' | 'createdAt'>): string;
   updateChild(id: string, patch: Partial<Omit<Child, 'id'>>): void;
@@ -109,6 +138,8 @@ export const useStore = create<State>()(
       activeChildId: null,
       data: {},
       settings: {},
+      enrolledMembers: {},
+      pendingEnrollments: {},
 
       registerParent: async (email, password) => {
         const passwordHash = await hashSecret(password);
@@ -152,6 +183,46 @@ export const useStore = create<State>()(
           parent: s.parent ?? { email: 'admin@local', passwordHash: '', consentGivenAt: new Date().toISOString(), createdAt: new Date().toISOString() },
           parentSignedIn: true,
         })),
+
+      startEnrollment: (email) => {
+        const code = String(Math.floor(100000 + Math.random() * 900000));
+        const cleanEmail = email.trim().toLowerCase();
+        set((s) => ({ pendingEnrollments: { ...s.pendingEnrollments, [cleanEmail]: { code, createdAt: new Date().toISOString() } } }));
+        return code;
+      },
+
+      verifyEnrollment: async (email, code, pin) => {
+        const cleanEmail = email.trim().toLowerCase();
+        const pending = get().pendingEnrollments[cleanEmail];
+        if (!pending || pending.code !== code.trim()) return false;
+        if (Date.now() - Date.parse(pending.createdAt) > ENROLLMENT_CODE_TTL_MS) return false;
+        const pinHash = await hashSecret(pin);
+        set((s) => {
+          const pendingEnrollments = { ...s.pendingEnrollments };
+          delete pendingEnrollments[cleanEmail];
+          return {
+            pendingEnrollments,
+            enrolledMembers: { ...s.enrolledMembers, [cleanEmail]: { email: cleanEmail, pinHash, enrolledAt: new Date().toISOString() } },
+          };
+        });
+        return true;
+      },
+
+      memberSignIn: async (email, pin) => {
+        const cleanEmail = email.trim().toLowerCase();
+        const member = get().enrolledMembers[cleanEmail];
+        if (!member) return false;
+        const pinHash = await hashSecret(pin);
+        if (pinHash !== member.pinHash) return false;
+        // Unlocks the same local family account an admin already set up here, mirroring adminSignIn's
+        // fallback — enrollment always happens on a device that already has that account, but this
+        // keeps a caregiver from being locked out if storage was ever cleared.
+        set((s) => ({
+          parent: s.parent ?? { email: cleanEmail, passwordHash: '', consentGivenAt: new Date().toISOString(), createdAt: new Date().toISOString() },
+          parentSignedIn: true,
+        }));
+        return true;
+      },
 
       signOut: () => set({ parentSignedIn: false, activeChildId: null, backendAuth: null }),
 
@@ -360,6 +431,8 @@ export const useStore = create<State>()(
         activeChildId: s.activeChildId,
         data: s.data,
         settings: s.settings,
+        enrolledMembers: s.enrolledMembers,
+        pendingEnrollments: s.pendingEnrollments,
       }),
     },
   ),

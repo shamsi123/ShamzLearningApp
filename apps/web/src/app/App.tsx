@@ -11,6 +11,9 @@ import { useOnlineSync } from './useOnlineSync';
 
 const Welcome = lazy(() => import('@/features/welcome/WelcomeScreen'));
 const Auth = lazy(() => import('@/features/auth/AuthScreen'));
+const Enroll = lazy(() => import('@/features/auth/EnrollScreen'));
+const EnrollVerify = lazy(() => import('@/features/auth/EnrollVerifyScreen'));
+const MemberSignIn = lazy(() => import('@/features/auth/MemberSignInScreen'));
 const Profiles = lazy(() => import('@/features/profiles/ProfilesScreen'));
 const NewProfile = lazy(() => import('@/features/profiles/NewProfileScreen'));
 const PinEntry = lazy(() => import('@/features/profiles/PinScreen'));
@@ -75,6 +78,9 @@ function Shell() {
           <Route path="/" element={<Welcome />} />
           <Route path="/signup" element={<Auth mode="signup" />} />
           <Route path="/signin" element={<Auth mode="signin" />} />
+          <Route path="/signin/pin" element={<MemberSignIn />} />
+          <Route path="/enroll" element={<Enroll />} />
+          <Route path="/enroll/verify" element={<EnrollVerify />} />
           <Route path="/profiles" element={<RequireParent><Profiles /></RequireParent>} />
           <Route path="/profiles/new" element={<RequireParent><Gated><NewProfile /></Gated></RequireParent>} />
           <Route path="/profiles/:childId/pin" element={<RequireParent><PinEntry /></RequireParent>} />

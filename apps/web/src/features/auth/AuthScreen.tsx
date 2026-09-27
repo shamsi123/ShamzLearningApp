@@ -78,6 +78,24 @@ export default function AuthScreen({ mode }: { mode: 'signup' | 'signin' }) {
       >
         🛠️ {t('auth.adminAccess')}
       </button>
+      {mode === 'signin' && (
+        <>
+          <button
+            type="button"
+            onClick={() => navigate('/signin/pin')}
+            className="mt-2 w-full text-center text-sm font-bold text-ink/40 underline underline-offset-2"
+          >
+            🔑 {t('auth.pinSignIn')}
+          </button>
+          <button
+            type="button"
+            onClick={() => navigate('/enroll')}
+            className="mt-2 w-full text-center text-sm font-bold text-ink/40 underline underline-offset-2"
+          >
+            🧑‍🤝‍🧑 {t('auth.enroll')}
+          </button>
+        </>
+      )}
     </Screen>
   );
 }
